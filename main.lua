@@ -1,110 +1,177 @@
-require 'entity'
+
+require 'mymenu'
+require 'character'
 require 'skill'
-require 'menu'
+require 'images'
+require 'battle'
 
-function love.load() 
-	background = love.graphics.newImage("bg.png")
-	love.window.setMode(480,320,{resizable=true})
+menuStack = {}
 
+
+function love.load()
+
+	fn_image = love.graphics.newImage("res/font.png")
+	fn_image:setFilter("nearest", "nearest")
+	font = love.graphics.newImageFont(fn_image,
+		" abcdefghijklmnopqrstuvwxyz" ..
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ" ..
+		"1234567890!@#%^&*()-_=[]{}.?"
+	)
+	love.graphics.setFont(font)
+
+	characters = {}
+	enemies = {}
 	entities = {}
 
-	karna = entity.new("Karna", 0, 0, "karna-base.png", {
-		skill.new("Berserk",70,0,"Increase offensive stats, lose defence and control", "berserk.png"),
-		skill.new("Defend",70,75, "Defend an ally for one turn", "defend.png")
-	}, {hp = 10, att = 3, def = 2, spd = 1, mgd = 0, mga = 0})
-
-	alnar = entity.new("Alnar", 0, 42, "alnar-base.png", {
-		skill.new("Drain Life",70,0, "Steal health points from target", "resurrect.png"),
-		skill.new("Blast",70,75, "Deal non-elemental magic dmage to target", "blast.png") 
-	}, {hp = 10, att = 3, def = 2, spd = 1, mgd = 0, mga = 0})
-
-	lysh = entity.new("Lysh", 0, 84, "lysh-base.png", {
-		skill.new("Shoot", 70,0,"Deal physical damage and apply effects to target", "shoot.png"),
-		skill.new("Parry", 70,75,"Counterattack against an enemy", "parry.png")
-	}, {hp = 10, att = 3, def = 2, spd = 1, mgd = 0, mga = 0})
-
-	nez = entity.new("Nez", 0, 126, "nez-base.png", {
-		skill.new("Meditate",70,0, "Restore health and increase defence", "meditate.png"),
-		skill.new("Nature", 70,75, "Deal non-elemental damage to all targets", "nature.png")
-	}, {hp = 10, att = 3, def = 2, spd = 1, mgd = 0, mga = 0})
-
-	arrow = entity.new("Arrow", 36, 0, "arrow.png", {})
- 
-	current_menu = menu.new({
-		menu.new(karna.skills),
-		menu.new(alnar.skills),
-		menu.new(lysh.skills),
-		menu.new(nez.skills)
-	})
-	selected_index = 1
-
-
-	enemy = entity.new("Zombie", 230, 200, "zombie.png", {},
-		{hp = 10, att = 3, def = 2, spd = 1, mgd = 0, mga = 0}, 
-		function() love.graphics.print(enemy.stats.hp, enemy.x, enemy.y) end)
-
-	table.insert(entities, karna)
-	table.insert(entities, alnar)
-	table.insert(entities, lysh)
-	table.insert(entities, nez)
-	table.insert(entities, enemy)
+	arrow = {image=res.arrow, pos={x=0,y=0}}
 	table.insert(entities, arrow)
 
-end
+	zombie = {name = "Zombie", image=res.enemy_zombie, pos={x=125, y=200}}
+	zombie.stats = {currentHp = 10, endurance = 1, wisdom = 3}
 
-function makeSkill(name, desc, image)
-	skill = {}
-	skill.name = name
-	skill.description = desc
-	skill.image = love.graphics.newImage(image)
-	return skill
-end
 
-function love.keypressed(key, scancode, isrepeat) 
-	if key=="return" then
-		current_menu = current_meu.selections[selected_index]
-		selected_index = 1
+	ghoul = {name = "Ghoul", image=res.enemy_ghoul, pos={x=175, y=200}}
+	ghoul.stats = {currentHp = 7, endurance = 2, wisdom = 1}
+
+	table.insert(enemies, zombie)
+	table.insert(enemies, ghoul)
+
+	table.insert(characters, karna)
+	table.insert(characters, alnar)
+	table.insert(characters, lysh)
+	table.insert(characters, nez)
+
+	for _, v in pairs(characters) do
+		table.insert(entities, v)
+		for i, s in ipairs(v.skills) do
+			s.pos = {x=125, y=60*(i-1)}
+			local t_menu = {}
+
+
+			if s.targets == "SELF" then
+				-- target only self
+				local _target = {}
+				_target.pos = v.pos
+				_target.action = function() s.use(v) end
+				table.insert(t_menu, _target)
+			end
+
+			if s.targets == "SINGLE" then
+				-- target a single enemy
+				for _, enemy in pairs(enemies) do
+					local _target = {}
+					_target.pos = enemy.pos
+					_target.action = function() s.use(enemy) end
+					table.insert(t_menu, _target)
+				end
+			end
+			if s.targets == "ALLY" then 
+				for _, ally in pairs(characters) do
+					local _target = {} 
+					_target.pos = ally.pos
+					_target.action = function() s.use(ally) end
+					table.insert(t_menu, _target)
+				end
+			end
+			if s.targets == "AOE" then
+				local _target = {}
+				_target.pos = enemies[1].pos
+				_target.action = function() s.use(enemies) end
+				table.insert(t_menu, _target) 
+
+				local _target2 = {}
+				_target2.pos = karna.pos
+				_target2.action = function() s.use(characters) end
+				table.insert(t_menu, _target2)
+			end
+			s.menu = mymenu.new(s.name, t_menu)
+		end
+		v.menu = mymenu.new(v.name, v.skills)
 	end
-	for i, s in ipairs(current_menu) do
-		if selected == s then
-			i = selected_index
+
+	for _, v in pairs(enemies) do
+		table.insert(entities, v)
+	end
+
+	charmenu = mymenu.new("Party", characters)
+	menu = menuStack.push(charmenu)
+
+end
+
+function love.keypressed(key, scancode, isrepeat)
+	if key=="return" then
+
+		-- Menu option actions happen
+		if menu:selectionHasAction() then
+			menuStack.peek():doAction()
+			menuStack.pop()
+			menuStack.pop()
+			menu = menuStack.peek()
+		end
+		-- Menu sub menu opening happens
+		if menu:selectionHasSubMenu() then
+			menu = menuStack.push(menu:getSubMenu())
 		end
 	end
 
-	if key=="down" then
-		selected_index = selected_index + 1 
-	end
-	if key=="up" then
-		selected_index = selected_index - 1 
+	if key=="backspace" then
+		if table.getn(menuStack) > 1 then
+			menuStack.pop()
+			menu = menuStack.peek()
+		end
 	end
 
-
-	selected_index = math.max(selected_index, 1)
-	selected_index = math.min(#current_menu, selected_index)
+	if key == "down" then 
+		menu:nextSelection() 
+	end
+	
+	if key == "up" then 
+		menu:previousSelection()
+	end
 
 end
 
 function love.update(dt)
-	selected = current_menu[selected_index]
-	if canChange then 
-		arrow.y = current_menu[selected_index].y
-		arrow.x = current_menu[selected_index].x + 36
-	end
+	local selected = menu:getSelected()
+	arrow.pos = {x = selected.pos.x + 42, y = selected.pos.y}
 end
 
 function love.draw()
-
-	for _,v in pairs(entities) do
-		v:render()
+	love.graphics.scale(2.4,2.4)
+	for i, m in ipairs(menuStack) do
+		love.graphics.print(m.name .. ">", 60*(i-1), 400)
 	end
-	if current_menu ~= nil then
-		if current_menu[selected_index] ~= nil then
-			for i, v in ipairs(current_menu[selected_index].skills) do
-				v:render(100,(i-1)*75)
-				-- love.graphics.draw(v.image, 100, i*75)
-				-- love.graphics.print(v.name, 100, i*75 + 20)
-				-- love.graphics.print(v.description, 100, i*75 + 40)
+
+	for i, v in ipairs(entities) do
+		love.graphics.draw(v.image, v.pos.x, v.pos.y)
+
+		if v.stats ~= nil then 
+			if v.stats.currentHp == nil then 
+				v.stats.currentHp = maxHpFormula(v)
 			end
+			love.graphics.print(v.stats.currentHp, v.pos.x+30, v.pos.y)
 		end
 	end
+
+	for i, skill in ipairs(charmenu:getSelected().skills) do
+		love.graphics.draw(skill.image, 110, 60*(i-1) + 5)
+		love.graphics.print(skill.name, 110, 60*(i-1) + 25)
+		love.graphics.print(skill.description, 110, 60*(i-1) + 45)
+	end
+
+end
+
+function menuStack.peek() 
+	local m = table.remove(menuStack, table.getn(menuStack))
+	table.insert(menuStack, m)
+	return m
+end
+
+function menuStack.pop() 
+	table.remove(menuStack, table.getn(menuStack))
+end
+
+function menuStack.push(data)
+	table.insert(menuStack, data)
+	return data
 end
