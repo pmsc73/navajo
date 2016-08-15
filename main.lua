@@ -4,37 +4,51 @@ require 'character'
 require 'skill'
 require 'images'
 require 'battle'
+require 'overworld'
+require 'battlemenu'
+require 'mainmenu'
 
 menuStack = {}
 
+local px,py = 100,100
 
 function love.load()
-
+	bg = res.background
 	fn_image = love.graphics.newImage("res/font.png")
 	fn_image:setFilter("nearest", "nearest")
 	font = love.graphics.newImageFont(fn_image,
 		" abcdefghijklmnopqrstuvwxyz" ..
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ" ..
-		"1234567890!@#%^&*()-_=[]{}.?"
-	)
+		"1234567890!@#%^&*()-_=[]{}.?/\\~"
+		)
 	love.graphics.setFont(font)
 
 	characters = {}
 	enemies = {}
-	entities = {}
 
-	arrow = {image=res.arrow, pos={x=0,y=0}}
+	entities = {}
+	removable = {}
+
+	arrow = {image=res.arrow, pos={x=380,y=0}}
 	table.insert(entities, arrow)
 
-	zombie = {name = "Zombie", image=res.enemy_zombie, pos={x=125, y=200}}
-	zombie.stats = {currentHp = 10, endurance = 1, wisdom = 3}
+	zombie = {name = "Zombie", image=res.enemy_zombie, pos={x=10, y=20}}
+	zombie.stats = {constitution = 5, endurance = 1, wisdom = 3}
 
 
-	ghoul = {name = "Ghoul", image=res.enemy_ghoul, pos={x=175, y=200}}
-	ghoul.stats = {currentHp = 7, endurance = 2, wisdom = 1}
+	ghoul = {name = "Ghoul", image=res.enemy_ghoul, pos={x=10, y=64}}
+	ghoul.stats = {constitution = 3.5, endurance = 2, wisdom = 1}
+
+	puddle = {name = "Puddle", image=res.enemy_puddle, pos={x=10, y=108}}
+	puddle.stats = {constitution = 6, endurance = 1, wisdom = 1}
 
 	table.insert(enemies, zombie)
 	table.insert(enemies, ghoul)
+	table.insert(enemies, puddle)
+
+	for _, e in pairs(enemies) do
+		e.stats.currentHp = maxHpFormula(e)
+	end
 
 	table.insert(characters, karna)
 	table.insert(characters, alnar)
@@ -43,78 +57,69 @@ function love.load()
 
 	for _, v in pairs(characters) do
 		table.insert(entities, v)
-		for i, s in ipairs(v.skills) do
-			s.pos = {x=125, y=60*(i-1)}
-			local t_menu = {}
-
-
-			if s.targets == "SELF" then
-				-- target only self
-				local _target = {}
-				_target.pos = v.pos
-				_target.action = function() s.use(v) end
-				table.insert(t_menu, _target)
-			end
-
-			if s.targets == "SINGLE" then
-				-- target a single enemy
-				for _, enemy in pairs(enemies) do
-					local _target = {}
-					_target.pos = enemy.pos
-					_target.action = function() s.use(enemy) end
-					table.insert(t_menu, _target)
-				end
-			end
-			if s.targets == "ALLY" then 
-				for _, ally in pairs(characters) do
-					local _target = {} 
-					_target.pos = ally.pos
-					_target.action = function() s.use(ally) end
-					table.insert(t_menu, _target)
-				end
-			end
-			if s.targets == "AOE" then
-				local _target = {}
-				_target.pos = enemies[1].pos
-				_target.action = function() s.use(enemies) end
-				table.insert(t_menu, _target) 
-
-				local _target2 = {}
-				_target2.pos = karna.pos
-				_target2.action = function() s.use(characters) end
-				table.insert(t_menu, _target2)
-			end
-			s.menu = mymenu.new(s.name, t_menu)
-		end
-		v.menu = mymenu.new(v.name, v.skills)
 	end
 
 	for _, v in pairs(enemies) do
 		table.insert(entities, v)
 	end
 
-	charmenu = mymenu.new("Party", characters)
-	menu = menuStack.push(charmenu)
+	b_menu = battlemenu.init(characters, alnar, enemies)
 
-end
-
-function love.keypressed(key, scancode, isrepeat)
-	if key=="return" then
-
-		-- Menu option actions happen
-		if menu:selectionHasAction() then
-			menuStack.peek():doAction()
-			menuStack.pop()
-			menuStack.pop()
-			menu = menuStack.peek()
-		end
-		-- Menu sub menu opening happens
-		if menu:selectionHasSubMenu() then
-			menu = menuStack.push(menu:getSubMenu())
+	for k, v in pairs(b_menu.selections) do
+		if v.name == "Skill" then
+			v.callback = function() openSkillMenu(alnar) end
 		end
 	end
 
+	menu = menuStack.push(b_menu)
+	state = {}
+	state.name = "OVERWORLD"
+	state.draw = function()
+		 draw_world(karna.image, px,py) 
+	end
+end
+
+function openSkillMenu(char) 
+	local ui_skill = {selections = {}}
+	for _, v in pairs(char.skills) do
+		table.insert(ui_skill.selections, v)
+	end
+	ui_skill.pos = {x=200, y=215}
+	ui_skill.dim = {w=140, h=80}
+
+	table.insert(entities, ui_skill)
+	table.insert(removable, ui_skill)
+end
+
+function love.keypressed(key, scancode, isrepeat)
+	if key=="p" and state.name=="OVERWORLD" then
+		state = menuState
+	end
+
+	if key=="return" then
+		if menu:getSelected().callback ~= nil then 
+			menu:getSelected().callback()
+		end
+		-- Menu option actions happen
+
+		-- Menu sub menu opening happens
+		if menu:selectionHasSubMenu() then
+			subMenu = menu:getSubMenu()
+			menu = menuStack.push(subMenu)
+		end
+
+	end
+
 	if key=="backspace" then
+		for i, v in ipairs(removable) do
+			for j, b in ipairs(entities) do
+				if b == v then
+					table.remove(entities, j)
+				end
+			end
+			table.remove(removable, i)
+		end
+
 		if table.getn(menuStack) > 1 then
 			menuStack.pop()
 			menu = menuStack.peek()
@@ -122,43 +127,61 @@ function love.keypressed(key, scancode, isrepeat)
 	end
 
 	if key == "down" then 
-		menu:nextSelection() 
+		--menu:nextSelection() 
+		py = py + 1
 	end
 	
 	if key == "up" then 
-		menu:previousSelection()
+		--menu:previousSelection()
+		py = py - 1
+	end
+
+	if key == "right" then
+		px = px + 1
+	end
+
+	if key == "left" then
+		px = px - 1
 	end
 
 end
 
 function love.update(dt)
 	local selected = menu:getSelected()
-	arrow.pos = {x = selected.pos.x + 42, y = selected.pos.y}
-end
+	local ay = menu:getIndex()*(menu.y_increment)
+	if menu.arrow_y ~= nil then
+		ay = ay + menu.arrow_y
+	else ay = ay + 200 end
+	arrow.pos = {x = menu.arrow_x, y = ay}
 
-function love.draw()
-	love.graphics.scale(2.4,2.4)
-	for i, m in ipairs(menuStack) do
-		love.graphics.print(m.name .. ">", 60*(i-1), 400)
-	end
-
-	for i, v in ipairs(entities) do
-		love.graphics.draw(v.image, v.pos.x, v.pos.y)
-
-		if v.stats ~= nil then 
-			if v.stats.currentHp == nil then 
-				v.stats.currentHp = maxHpFormula(v)
+	for i, e in ipairs(enemies) do
+		if e.stats.currentHp <= 0 then
+			e.dead = true
+			menu.needs_init = true
+			table.remove(enemies, i)
+			for j, _e in ipairs(entities) do
+				if _e == e then
+					table.remove(entities, j)
+				end
 			end
-			love.graphics.print(v.stats.currentHp, v.pos.x+30, v.pos.y)
 		end
 	end
 
-	for i, skill in ipairs(charmenu:getSelected().skills) do
-		love.graphics.draw(skill.image, 110, 60*(i-1) + 5)
-		love.graphics.print(skill.name, 110, 60*(i-1) + 25)
-		love.graphics.print(skill.description, 110, 60*(i-1) + 45)
+	if menu.needs_init then
+		menuStack.clear()
+		menu = menuStack.push(battlemenu.init(characters, alnar, enemies))
 	end
+	
+end
 
+function love.draw()
+	state.draw()
+end
+
+function menuStack.clear()
+	for i, m in ipairs(menuStack) do
+		table.remove(menuStack, i)
+	end
 end
 
 function menuStack.peek() 
@@ -174,4 +197,14 @@ end
 function menuStack.push(data)
 	table.insert(menuStack, data)
 	return data
+end
+
+function fpairs(list, criteria) 
+	local o = {}
+	for _, v in pairs(list) do
+		if not v.criteria then
+			table.insert(o, v)
+		end
+	end
+	return pairs(o)
 end

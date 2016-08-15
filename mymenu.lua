@@ -4,29 +4,33 @@ mymenu = {}
 mymenu.__index = mymenu
 
 -- Class Methods
-function mymenu.new(name, selections)
+function mymenu.new(name, selections, callback, ax, ay_offset, ay)
 	local o = {}
 	o.name = name
 	o.selections = selections
 	o.s_index = 1
+	o.arrow_x = ax
+	o.arrow_y = ay
+	o.y_increment = ay_offset
+	o.callback = callback
 	setmetatable(o,mymenu)
 	return o
 end
 
 function mymenu:selectionHasSubMenu() 
-	return self.selections[self.s_index].menu ~= nil
+	return self.selections[self.s_index].selections ~= nil
 end
 
 function mymenu:getSubMenu() 
-	return self.selections[self.s_index].menu
+	return self.selections[self.s_index]
 end
 
 function mymenu:selectionHasAction() 
-	return self.selections[self.s_index].action ~= nil
+	return self.selections[self.s_index].callback ~= nil
 end
 
 function mymenu:doAction() 
-	self.selections[self.s_index].action()
+	self.selections[self.s_index].callback()
 end
 
 function mymenu:getSelected() 

@@ -16,28 +16,37 @@ function character.new(name, image, ax, ay)
 	return o
 end
 
-karna = character.new("Karna", res.karna, 0,  0)
+karna = character.new("Karna", res.karna, 340,  32)
 karna.skills = {skill.berserk, skill.defend}
 karna.stats = 
 {
 	constitution = 5,
 	strength = 8,
 	endurance = 5,
-	agility = 4,
-	wisdom = 2,
-	intelligence = 2	
-}
 
-alnar = character.new("Alnar", res.alnar, 0, 42)
+	agility = 4,
+	dexterity = 4,
+	luck = 1,
+
+	wisdom = 2,
+	intelligence = 2,
+	willpower = 1,
+}
+alnar = character.new("Alnar", res.alnar, 340, 74)
 alnar.skills = {skill.drain, skill.blast}
 alnar.stats =
 {
 	constitution = 4,
 	strength = 2,
 	endurance = 4,
+
 	agility = 5,
+	dexterity = 3,
+	luck = 2,
+
 	wisdom = 6,
 	intelligence = 7,	
+	willpower = 10,
 }
 alnar.skills[1].use = function(enemy) 
 	battleSystem.dealDamage(MAGIC, alnar, enemy)
@@ -48,31 +57,41 @@ alnar.skills[2].use = function(enemy)
 	battleSystem.dealDamage(MAGIC, alnar, enemy, ELEM_NONE)
 end
 
-lysh = character.new("Lysh",   res.lysh, 0, 84)
+lysh = character.new("Lysh",   res.lysh, 340, 116)
 lysh.skills = {skill.shoot, skill.parry}
 lysh.stats =
 {
 	constitution = 3,
 	strength = 6,
 	endurance = 3,
+
 	agility = 8,
+	dexterity = 9,
+	luck = 4,
+
 	wisdom = 3,
-	intelligence = 3	
+	intelligence = 3,
+	willpower = 2	
 }
 lysh.skills[1].use = function(enemy)
 	battleSystem.dealDamage(PHYSICAL, lysh, enemy)
 end
 
-nez = character.new("Nez",     res.nez, 0,126)
+nez = character.new("Nez",     res.nez, 340,158)
 nez.skills = {skill.meditate, skill.nature}
 nez.stats =
 {
 	constitution = 5,
-	strength = 15,
+	strength = 8,
 	endurance = 10,
+
 	agility = 6,
+	dexterity = 2,
+	luck = 0,
+
 	wisdom = 8,
-	intelligence = 4
+	intelligence = 4,
+	willpower = 7
 }
 nez.skills[1].use = function()
 	battleSystem.heal(nez, nez.stats.wisdom)
@@ -82,4 +101,9 @@ nez.skills[2].use = function(enemies)
 	for _, enemy in pairs(enemies) do
 		battleSystem.dealDamage(MAGIC, nez, enemy, ELEM_NONE)
 	end
+end
+
+for _, c in pairs({karna, alnar, lysh, nez}) do
+	c.stats.currentHp = maxHpFormula(c)
+	c.stats.currentMp = maxMp(c)
 end

@@ -21,9 +21,11 @@ pres = {
 	-- ENEMY SPRITES
 	enemy_zombie= love.graphics.newImage("res/img/zombie.png"),
 	enemy_ghoul = love.graphics.newImage("res/img/ghoul.png"),
+	enemy_puddle= love.graphics.newImage("res/img/puddle.png"),
 
 	-- MISC, MENU STUFF
-	arrow		= love.graphics.newImage("res/img/arrow.png")
+	arrow		= love.graphics.newImage("res/img/arrow.png"),
+	background  = love.graphics.newImage("res/img/bg.png")
 }
 for _, image in pairs(pres) do
 	image:setFilter("nearest", "nearest")
