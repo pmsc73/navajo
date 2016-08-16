@@ -106,4 +106,18 @@ end
 for _, c in pairs({karna, alnar, lysh, nez}) do
 	c.stats.currentHp = maxHpFormula(c)
 	c.stats.currentMp = maxMp(c)
+	c.stats.currentXp = 0
+	c.level = math.floor(math.random() * 55)
+end
+
+function xpForLevel(char, level) 
+	return math.floor((level + 100 / 4) * 3 ^ (level / 10))
+end
+
+function xpToLevel(char) 
+	local xp = 0
+	for i = 1, char.level do
+		xp = xp + xpForLevel(char, i)
+	end
+	return xp
 end

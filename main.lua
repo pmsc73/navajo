@@ -19,7 +19,7 @@ function love.load()
 	font = love.graphics.newImageFont(fn_image,
 		" abcdefghijklmnopqrstuvwxyz" ..
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ" ..
-		"1234567890!@#%^&*()-_=[]{}.?/\\~"
+		"1234567890!@#%^&*()-_=[]{}.?/:\\~|<>;"
 		)
 	love.graphics.setFont(font)
 
@@ -93,7 +93,7 @@ end
 
 function love.keypressed(key, scancode, isrepeat)
 	if key=="p" and state.name=="OVERWORLD" then
-		state = menuState
+		state = battleState
 	end
 
 	if key=="return" then
@@ -126,13 +126,17 @@ function love.keypressed(key, scancode, isrepeat)
 		end
 	end
 
+	if key == "k" and state.name=="MAINMENU" then
+		karna.stats.currentHp = math.floor(karna.stats.currentHp / 2)
+	end
+
 	if key == "down" then 
-		--menu:nextSelection() 
+		menu:nextSelection() 
 		py = py + 1
 	end
 	
 	if key == "up" then 
-		--menu:previousSelection()
+		menu:previousSelection()
 		py = py - 1
 	end
 
