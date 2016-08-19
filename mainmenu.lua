@@ -53,6 +53,7 @@ menuState = {
 					gfx.print("~ " ..  sub.stats.currentMp .. " / " .. maxMp(sub),		x + 28, y + 21)
 					gfx.print("| " .. sub.stats.currentXp .. " / " .. xpToLevel(sub),		x + 74, y + 12)
 
+					love.graphics.draw(arrow.image, arrow.pos.x, arrow.pos.y)
 					-- love.graphics.print("   <    ", x + 120, y)
 					-- love.graphics.print("STR: " .. sub.stats.strength, x + 120, y + 14)
 					-- love.graphics.print("END: " .. sub.stats.endurance, x + 120, y + 28)

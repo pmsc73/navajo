@@ -42,7 +42,7 @@ function battlemenu.init(party, character, enemies)
 	newSelection(menu, option_item, nil)
 	newSelection(menu, option_escape, nil)
 
-	return mymenu.new("Battle", menu, nil, 380, 15);
+	return mymenu.new("Battle", menu, nil, 380, 15)
 end
 
 function attackMenu(character, enemies)
@@ -113,4 +113,3 @@ function newSelection(parent, sub, callback)
 	sub.callback = callback
 	table.insert(parent, sub)
 end
-

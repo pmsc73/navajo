@@ -1,5 +1,4 @@
 -- Image resources
-init_flag = false
 pres = {
 
 	-- CHARACTER SPRITES

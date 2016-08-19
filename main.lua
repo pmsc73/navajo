@@ -33,14 +33,13 @@ function love.load()
 	table.insert(entities, arrow)
 
 	zombie = {name = "Zombie", image=res.enemy_zombie, pos={x=10, y=20}}
-	zombie.stats = {constitution = 5, endurance = 1, wisdom = 3}
-
+	zombie.stats = {agility = 1, constitution = 5, endurance = 1, wisdom = 3}
 
 	ghoul = {name = "Ghoul", image=res.enemy_ghoul, pos={x=10, y=64}}
-	ghoul.stats = {constitution = 3.5, endurance = 2, wisdom = 1}
+	ghoul.stats = {agility = 2, constitution = 3.5, endurance = 2, wisdom = 1}
 
 	puddle = {name = "Puddle", image=res.enemy_puddle, pos={x=10, y=108}}
-	puddle.stats = {constitution = 6, endurance = 1, wisdom = 1}
+	puddle.stats = {agility = 0, constitution = 6, endurance = 1, wisdom = 1}
 
 	table.insert(enemies, zombie)
 	table.insert(enemies, ghoul)
@@ -71,6 +70,23 @@ function love.load()
 		end
 	end
 
+	actions = {}
+	for _, enemy in pairs(enemies) do
+		table.insert(actions, enemy)
+	end
+
+	for _, character in pairs(characters) do
+		table.insert(actions, character)
+	end
+
+	actionsArray = {}
+
+	for i, v in ipairs(actions) do
+		actionsArray[i] = v
+	end
+
+	table.sort(actionsArray, function(a,b) return a.stats.agility > b.stats.agility end)
+
 	menu = menuStack.push(b_menu)
 	state = {}
 	state.name = "OVERWORLD"
@@ -93,7 +109,8 @@ end
 
 function love.keypressed(key, scancode, isrepeat)
 	if key=="p" and state.name=="OVERWORLD" then
-		state = battleState
+		state = menuState
+		-- menu = menuStack:push(mymenu.new("MAIN", menuContent, function() state = battleState end, 150, 5, 1))
 	end
 
 	if key=="return" then
@@ -173,13 +190,16 @@ function love.update(dt)
 
 	if menu.needs_init then
 		menuStack.clear()
-		menu = menuStack.push(battlemenu.init(characters, alnar, enemies))
+		menu = menuStack.push(battlemenu.init(characters, actionsArray[1], enemies))
 	end
 	
 end
 
 function love.draw()
 	state.draw()
+	-- for i = 1, #actionsArray do
+	-- 	love.graphics.print(actionsArray[i].name, 5, 12*(i-1) + 15)
+	-- end
 end
 
 function menuStack.clear()

@@ -126,7 +126,7 @@ battleState = {
 		end
 		love.graphics.draw(arrow.image, arrow.pos.x, arrow.pos.y)
 		for i, m in ipairs(menuStack) do
-			love.graphics.print(m.name .. ">", 60*(i-1), 200)
+			love.graphics.print(m.name .. " / ", 60*(i-1), 200)
 		end
 	end
 }
