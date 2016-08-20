@@ -89,3 +89,31 @@ function draw_world(p_image, px, py)
 	love.graphics.draw(p_image, love.graphics.getWidth() / 2 - 16, love.graphics.getHeight() / 2 - 20)
 end
 
+overworldState = {
+	name = "Overworld",
+
+	init = function(party) 
+		entities = {}
+		entities.player = party[1]
+		entities.player.map_pos = { x = 32, y = 32 } 
+
+		entities.tiles = {}
+		entities.tiles.render = function()
+			draw_world(player.image, player.map_pos.x, player.map_pos.y)
+		end
+
+		return entities
+	end,
+
+	onUpdate = function(dt) 
+		-- DO UPDATE STUFF
+	end,
+
+	onKeyPress = function(key) 		
+		if key == "down" 	then player.map_pos.y = player.map_pos.y + 1 end
+		if key == "up"		then player.map_pos.y = player.map_pos.y - 1 end
+		if key == "left"	then player.map_pos.x = player.map_pos.x - 1 end
+		if key == "right"	then player.map_pos.x = player.map_pos.x + 1 end
+		--if key == "return" 	then stateTransition("Menu") end
+	end
+}
