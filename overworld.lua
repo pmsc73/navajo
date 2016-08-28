@@ -69,7 +69,6 @@ local WIDTH = 25
 function draw_world(p_image, px, py)
 	for i = 1, HEIGHT do
 		for j = 1, WIDTH do
-			--love.graphics.print(world[i][j], (j-1)*8, (i-1)*8)
 			local x = 32*(j-1)
 			local y = 32*(i-1)
 			local tx,ty
@@ -86,21 +85,25 @@ function draw_world(p_image, px, py)
 			love.graphics.draw(tiles, tile, x, y)
 		end
 	end
-	love.graphics.draw(p_image, love.graphics.getWidth() / 2 - 16, love.graphics.getHeight() / 2 - 20)
+	-- love.graphics.draw(p_image, love.graphics.getWidth() / 2 - 16, love.graphics.getHeight() / 2 - 20)
 end
 
 overworldState = {
 	name = "Overworld",
-
 	init = function(party) 
+		
 		entities = {}
-		entities.player = party[1]
-		entities.player.map_pos = { x = 32, y = 32 } 
+		player = party[1]
+		player.pos = { x = love.graphics.getWidth() / 2 - 16, y = love.graphics.getHeight() / 2 - 20 }
 
-		entities.tiles = {}
-		entities.tiles.render = function()
+		e_tiles = {}
+		e_tiles.render = function()
 			draw_world(player.image, player.map_pos.x, player.map_pos.y)
 		end
+
+		table.insert(entities, e_tiles)
+		table.insert(entities, player)
+
 
 		return entities
 	end,
@@ -111,7 +114,7 @@ overworldState = {
 
 	onKeyPress = function(key) 		
 		if key == "down" 	then player.map_pos.y = player.map_pos.y + 1 end
-		if key == "up"		then player.map_pos.y = player.map_pos.y - 1 end
+		if key == "up"		then player.map_pos.y = player.map_pos.y - 1 end		
 		if key == "left"	then player.map_pos.x = player.map_pos.x - 1 end
 		if key == "right"	then player.map_pos.x = player.map_pos.x + 1 end
 		--if key == "return" 	then stateTransition("Menu") end

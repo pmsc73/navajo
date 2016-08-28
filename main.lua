@@ -8,12 +8,15 @@
 -- REQUIRES
 
 require('overworld')
-	-- for stateConstants
+	-- for overworldState
+
+require('battle')
+	-- for battleState
 
 require('character')
 	-- for party members: karna, alnar, lysh, nez
 
-local current_state = overworldState
+local current_state = battleState
 local state_changed = true
 
 local party = {karna, alnar, lysh, nez}
@@ -26,10 +29,9 @@ function love.load()
 end
 
 function love.keypressed(key, scancode, isrepeat)
-	if current_state.onKeyPress ~= nil then
-		current_state.onKeyPress(key)
-	end
+	current_state.onKeyPress(key)
 end
+
 
 -- Update function gets deligated to the state object
 function love.update(dt)
@@ -42,6 +44,7 @@ end
 
 -- Draw function gets deligated to the state object
 function love.draw()
+	love.graphics.scale(2.0, 2.0)
 	for depth, entity in ipairs(current_state.entities) do
 		if entity.render ~= nil then
 			entity.render()

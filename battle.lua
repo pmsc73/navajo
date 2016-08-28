@@ -1,4 +1,5 @@
--- all battle calculations go here
+require 'images'
+require 'boxes'
 
 battleSystem = {} 
 
@@ -53,10 +54,51 @@ function round(number)
 	return math.floor(number + 0.5)
 end
 
+function enemies() 
+	zombie = {name = "Zombie", image=res.enemy_zombie, pos={x=10, y=20}}
+	zombie.stats = {agility = 1, constitution = 5, endurance = 1, wisdom = 3}
+
+	ghoul = {name = "Ghoul", image=res.enemy_ghoul, pos={x=10, y=64}}
+	ghoul.stats = {agility = 2, constitution = 3.5, endurance = 2, wisdom = 1}
+
+	puddle = {name = "Puddle", image=res.enemy_puddle, pos={x=10, y=108}}
+	puddle.stats = {agility = 0, constitution = 6, endurance = 1, wisdom = 1}
+
+	return {zombie, ghoul, puddle}
+end
+
 battleState = {
 	name = "BATTLE",
+	init = function(party)
+		entities = {}
 
-	draw = function() 
+		background = {
+			image = res.background,
+			pos = {x = 0, y = 0}
+		}
+
+		table.insert(entities, background)
+
+		local m_menu = menu_rectangle(0,210, 400, 100)
+		table.insert(entities, m_menu)
+
+		for i, player in ipairs(party) do
+			player.pos = { x = 340, y = 32 + (i-1)*42 }
+			table.insert(entities, player)
+		end
+
+		for i, enemy in ipairs(enemies()) do
+			table.insert(entities, enemy)
+		end
+
+		return entities
+	end, 
+
+	onUpdate = function(dt) 
+		-- DO UPDATE STUFF
+	end
+
+--[[draw = function() 
 
 		love.graphics.scale(2.0, 2.0)
 		love.graphics.draw(bg, 0,0)
@@ -128,5 +170,5 @@ battleState = {
 		for i, m in ipairs(menuStack) do
 			love.graphics.print(m.name .. " / ", 60*(i-1), 200)
 		end
-	end
+	end --]]
 }

@@ -12,6 +12,7 @@ function character.new(name, image, ax, ay)
 	o.name = name
 	o.image = image
 	o.pos = {x = ax, y = ay}
+	o.map_pos = {x = 130, y = 130}
 	setmetatable(o, character)
 	return o
 end
