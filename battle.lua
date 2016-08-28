@@ -1,5 +1,7 @@
 require 'images'
 require 'boxes'
+require 'graphics'
+require 'mymenu'
 
 battleSystem = {} 
 
@@ -54,7 +56,7 @@ function round(number)
 	return math.floor(number + 0.5)
 end
 
-function enemies() 
+function get_enemies() 
 	zombie = {name = "Zombie", image=res.enemy_zombie, pos={x=10, y=20}}
 	zombie.stats = {agility = 1, constitution = 5, endurance = 1, wisdom = 3}
 
@@ -69,6 +71,7 @@ end
 
 battleState = {
 	name = "BATTLE",
+
 	init = function(party)
 		entities = {}
 
@@ -82,22 +85,45 @@ battleState = {
 		local m_menu = menu_rectangle(0,210, 400, 100)
 		table.insert(entities, m_menu)
 
-		for i, player in ipairs(party) do
-			player.pos = { x = 340, y = 32 + (i-1)*42 }
-			table.insert(entities, player)
+		for i, char in ipairs(party) do
+			char.pos = { x = 340, y = 32 + (i-1)*42 }
+
+			char.render = function() 
+				love.graphics.print(char.name, 231, 221 + (20*(i-1)))
+				local health = maxHpFormula(char)
+				gfx.print("\\ " .. char.stats.currentHp .. " / " .. health, 261, 221 + (20*(i-1)))
+				gfx.print("~ " .. char.stats.currentMp .. " / " .. maxMp(char), 301, 221 + (20*(i-1)))
+				love.graphics.draw(char.image, char.pos.x, char.pos.y)
+			end
+
+			table.insert(entities, char)
 		end
 
-		for i, enemy in ipairs(enemies()) do
+		for i, enemy in ipairs(get_enemies()) do
+			enemy.render = function() 
+				gfx.print(enemy.name, 25, 220 + 15*(i-1))
+				if enemy.stats.currentHp == nil then
+					enemy.stats.currentHp = maxHpFormula(enemy)
+				end
+				gfx.drawStatusBar(75,221 + 15*(i-1), 7, 60, maxHpFormula(enemy), enemy.stats.currentHp, {255,0,0}, {255, 255, 255})
+
+				love.graphics.draw(enemy.image, enemy.pos.x, enemy.pos.y)
+			end
+
+
 			table.insert(entities, enemy)
 		end
+
+		local o_menu = menu_rectangle(345,215,50,80)
+		table.insert(entities, o_menu)
 
 		return entities
 	end, 
 
 	onUpdate = function(dt) 
 		-- DO UPDATE STUFF
-	end
-
+	end,
+}
 --[[draw = function() 
 
 		love.graphics.scale(2.0, 2.0)
@@ -171,4 +197,4 @@ battleState = {
 			love.graphics.print(m.name .. " / ", 60*(i-1), 200)
 		end
 	end --]]
-}
+

@@ -12,6 +12,8 @@ function gfx.drawStatusBar(x, y, height, maxWidth, maxValue, currentValue, color
 		love.graphics.setColor(border)
 		love.graphics.rectangle("line", x, y, maxWidth, height, 2, 2)
 	end
+
+	love.graphics.setColor(255,255,255)
 end
 
 function gfx.print(string, x, y)

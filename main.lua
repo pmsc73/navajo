@@ -25,11 +25,20 @@ local party = {karna, alnar, lysh, nez}
 	 Initial, one time load function, to get all resources and things in place
 ]]--
 function love.load()
-	
+	fn_image = love.graphics.newImage("res/font.png")
+	fn_image:setFilter("nearest", "nearest")
+	font = love.graphics.newImageFont(fn_image,
+		" abcdefghijklmnopqrstuvwxyz" ..
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ" ..
+		"1234567890!@#%^&*()-_=[]{}.?/:\\~|<>;"
+		)
+	love.graphics.setFont(font)
 end
 
 function love.keypressed(key, scancode, isrepeat)
-	current_state.onKeyPress(key)
+	if current_state.onKeyPress ~= nil then
+		current_state.onKeyPress(key)
+	end
 end
 
 
@@ -50,6 +59,11 @@ function love.draw()
 			entity.render()
 		elseif entity.image ~= nil then
 			love.graphics.draw(entity.image, entity.pos.x, entity.pos.y)
+		end
+	end
+	if current_state.menu ~= nil then
+		for _, s in pairs(current_state.menu.selections) do
+			gfx.print(s, 100, 100)
 		end
 	end
 end
