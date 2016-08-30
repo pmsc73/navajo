@@ -3,6 +3,9 @@ require 'boxes'
 require 'graphics'
 require 'mymenu'
 
+require 'battlequeue'
+
+
 battleSystem = {} 
 
 -- constants
@@ -58,13 +61,13 @@ end
 
 function get_enemies() 
 	zombie = {name = "Zombie", image=res.enemy_zombie, pos={x=10, y=20}}
-	zombie.stats = {agility = 1, constitution = 5, endurance = 1, wisdom = 3}
+	zombie.stats = {agility = 2, constitution = 5, endurance = 1, wisdom = 3}
 
 	ghoul = {name = "Ghoul", image=res.enemy_ghoul, pos={x=10, y=64}}
-	ghoul.stats = {agility = 2, constitution = 3.5, endurance = 2, wisdom = 1}
+	ghoul.stats = {agility = 3, constitution = 3.5, endurance = 2, wisdom = 1}
 
 	puddle = {name = "Puddle", image=res.enemy_puddle, pos={x=10, y=108}}
-	puddle.stats = {agility = 0, constitution = 6, endurance = 1, wisdom = 1}
+	puddle.stats = {agility = 1, constitution = 6, endurance = 1, wisdom = 1}
 
 	return {zombie, ghoul, puddle}
 end
@@ -80,10 +83,10 @@ battleState = {
 			pos = {x = 0, y = 0}
 		}
 
-		table.insert(entities, background)
+		-- table.insert(entities, background)
 
 		local m_menu = menu_rectangle(0,210, 400, 100)
-		table.insert(entities, m_menu)
+		-- table.insert(entities, m_menu)
 
 		for i, char in ipairs(party) do
 			char.pos = { x = 340, y = 32 + (i-1)*42 }
@@ -96,7 +99,7 @@ battleState = {
 				love.graphics.draw(char.image, char.pos.x, char.pos.y)
 			end
 
-			table.insert(entities, char)
+			-- table.insert(entities, char)
 		end
 
 		for i, enemy in ipairs(get_enemies()) do
@@ -111,11 +114,22 @@ battleState = {
 			end
 
 
-			table.insert(entities, enemy)
+			-- table.insert(entities, enemy)
 		end
 
 		local o_menu = menu_rectangle(345,215,50,80)
-		table.insert(entities, o_menu)
+		-- table.insert(entities, o_menu)
+
+		local actors = {}
+		for _, char in pairs(party) do
+			table.insert(actors, char)
+		end
+
+		for _, enemy in pairs(get_enemies()) do
+			table.insert(actors, enemy)
+		end
+		local q = battleQueueInit(actors)
+		table.insert(entities, q)
 
 		return entities
 	end, 

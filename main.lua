@@ -46,6 +46,7 @@ end
 function love.update(dt)
 	if state_changed then 
 		current_state.entities = current_state.init(party)
+		state_changed = false
 	end
 
 	current_state.onUpdate(dt)
