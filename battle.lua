@@ -83,23 +83,23 @@ battleState = {
 			pos = {x = 0, y = 0}
 		}
 
-		-- table.insert(entities, background)
+		table.insert(entities, background)
 
 		local m_menu = menu_rectangle(0,210, 400, 100)
-		-- table.insert(entities, m_menu)
+		table.insert(entities, m_menu)
 
 		for i, char in ipairs(party) do
 			char.pos = { x = 340, y = 32 + (i-1)*42 }
 
 			char.render = function() 
-				love.graphics.print(char.name, 231, 221 + (20*(i-1)))
+				gfx.print(char.name, 231, 221 + (20*(i-1)))
 				local health = maxHpFormula(char)
 				gfx.print("\\ " .. char.stats.currentHp .. " / " .. health, 261, 221 + (20*(i-1)))
 				gfx.print("~ " .. char.stats.currentMp .. " / " .. maxMp(char), 301, 221 + (20*(i-1)))
 				love.graphics.draw(char.image, char.pos.x, char.pos.y)
 			end
 
-			-- table.insert(entities, char)
+			table.insert(entities, char)
 		end
 
 		for i, enemy in ipairs(get_enemies()) do
@@ -114,29 +114,36 @@ battleState = {
 			end
 
 
-			-- table.insert(entities, enemy)
+			table.insert(entities, enemy)
 		end
 
 		local o_menu = menu_rectangle(345,215,50,80)
-		-- table.insert(entities, o_menu)
+		table.insert(entities, o_menu)
 
 		local actors = {}
 		for _, char in pairs(party) do
+			char.controllable = true
 			table.insert(actors, char)
 		end
 
 		for _, enemy in pairs(get_enemies()) do
+			enemy.controllable = false
 			table.insert(actors, enemy)
 		end
-		local q = battleQueueInit(actors)
+
+		q = battleQueueInit(actors)
 		table.insert(entities, q)
 
-		return entities
+		return {entities, q}
 	end, 
 
 	onUpdate = function(dt) 
 		-- DO UPDATE STUFF
 	end,
+
+	onKeyPress = function(key) 
+		-- HANDLE KEY PRESSES
+	end
 }
 --[[draw = function() 
 

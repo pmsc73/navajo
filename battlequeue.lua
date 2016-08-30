@@ -2,15 +2,15 @@
 require 'graphics'
 
 
-local log2
-log2 = function(n) 
-	return math.log(n) / math.log(2)
+local calculateTurns
+calculateTurns = function(n, min)
+	return math.floor(math.log(n/min) / math.log(2))
 end
 
 queue = {}
 
 function nq(actor)
-	queue[#queue + 1] = actor
+	table.insert(queue, actor)
 end
 
 function battleQueueInit(actors)
@@ -27,16 +27,11 @@ function battleQueueInit(actors)
 		LRU[i] = actor
 	end
 	table.sort(LRU, function(a,b) return a.stats.agility > b.stats.agility end)
-	local originalLRU = {}
-	for i, actor in pairs(LRU) do
-		local temp = LRU[i]
-		table.insert(originalLRU, temp)
-	end
 
 	local totalTurns = 0
 	local maxTurns = 0
 	for i, actor in ipairs(actors) do
-		actor.turns = math.max(1, math.floor(log2(actor.stats.agility / min_agility)))
+		actor.turns = math.max(1, calculateTurns(actor.stats.agility, min_agility))
 		maxTurns = math.max(maxTurns, actor.turns)
 		totalTurns = totalTurns + actor.turns
 	end
@@ -67,32 +62,12 @@ function battleQueueInit(actors)
 		table.insert(q.actors, actor)
 	end
 	q.render = function() 
-		local qa = {}
-		for i, actor in ipairs(queue) do 
-			qa[i] = actor
-		end
-		gfx.print('Battle Queue |' .. totalTurns .. '| \\' .. maxTurns, 100, 5)
-		for i, value in ipairs(qa) do
+		
+		gfx.print('Battle Queue |' .. #q.actors .. '| \\' .. maxTurns, 100, 5)
+		for i, value in ipairs(q.actors) do
 			gfx.print(value.name, 100, 10 + 12*(i))
 		end
 	end
 
 	return q
 end
-
-
---[[
-
-p1 turns = 3
-p2 turns = 3
-p3 turns = 2
-p4 turns = 1
-
-queue = 
-{
-	{p1, p2},
-	{p3, p1, p2},
-	{p4, p3, p1, p2}
-}
-
-]]--

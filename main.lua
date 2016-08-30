@@ -45,7 +45,8 @@ end
 -- Update function gets deligated to the state object
 function love.update(dt)
 	if state_changed then 
-		current_state.entities = current_state.init(party)
+		current_state.entities = current_state.init(party)[1]
+		current_state.queue = current_state.init(party)[2]
 		state_changed = false
 	end
 
