@@ -15,11 +15,11 @@ map_state = function(name, map_file)
 	return s
 end
 
-local thern = map_state("THERN", res.thern)
+local kitala = map_state("KITALA", res.kitala)
 
 
 
 function localMapState() 
-	return thern
+	return kitala
 end
 

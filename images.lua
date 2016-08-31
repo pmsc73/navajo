@@ -27,7 +27,7 @@ pres = {
 	background  = love.graphics.newImage("res/img/bg.png"),
 
 	-- LOCAL MAP FILES
-	thern		= love.graphics.newImage("res/test.png")
+	kitala		= love.graphics.newImage("res/test.png")
 
 
 }
