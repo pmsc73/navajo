@@ -7,33 +7,19 @@
 	-
 ]]-- 
 
-
-require('overworld')
-	-- for overworldState
-
-require('mainmenu')
-	-- for menuState
-
-require('battle')
-	-- for battleState
-
-local function state(name, entities, update)
+function state(name, entities, update)
 	local s = {}
 	s.name = name
-	
-	s.draw = function() 
-		for depth, entity in ipairs(entities) do
-			entity.render()
-		end
+	s.entities = entities
+
+	s.init = function(party) 
+		return entities
 	end
-	
-	s.update = update
+
+	s.onKeyPress = function(key)
+		return nil
+	end
+
+	s.onUpdate = update
 	return s
 end
-
--- List of states
-
-stateConstants = {}
-stateConstants.OVERWORLD = overworldState
-stateConstants.BATTLE = battleState
-stateConstants.MENU = menuStateo

@@ -1,4 +1,8 @@
  -- overworld
+
+require 'local'
+	-- localMapState
+
 local mk = require('multikey')
 local get, put = mk.get, mk.put
 
@@ -51,11 +55,19 @@ function generateWorld(img)
 				if b==255 then appr[i] = BLUE end
 
 			end
+			local enterTown = function() 
+				changestate(localMapState())
+			end
 			local tile = {
 				tileId = get(t, appr[1], appr[2], appr[3], appr[4]),
-				onEnter = function() if math.rand() > 0.5 then commenceBattle() end end
+				
+				onEnter = function()
+					if get(t, appr[1], appr[2], appr[3], appr[4]) == 17 then
+						enterTown()
+					end
+				end
 			}
-			table.insert(row,get(t,appr[1],appr[2],appr[3], appr[4]))
+			table.insert(row,tile)
 		end
 		table.insert(w, row)
 	end
@@ -72,17 +84,19 @@ function draw_world(p_image, px, py)
 			local x = 32*(j-1)
 			local y = 32*(i-1)
 			local tx,ty
-			local pi = py - math.floor(HEIGHT/2) + i
-			local pj = px - math.floor(WIDTH/2) + j
-			if world[pi][pj] < 10 then
-				tx = world[pi][pj] * 32
+			local pi = py - math.floor(HEIGHT / 2)  + i - 1
+			local pj = px - math.floor(WIDTH / 2) + j - 1
+			if world[pi][pj].tileId < 10 then
+				tx = world[pi][pj].tileId * 32
 				ty = 0
 			else
-				tx = (world[pi][pj] % 10 ) * 32
+				tx = (world[pi][pj].tileId % 10 ) * 32
 				ty = 32
 			end
 			local tile = love.graphics.newQuad(tx, ty, 32, 32, tiles:getDimensions()) 
-			love.graphics.draw(tiles, tile, x, y)
+			if(not (pi == py and pj == px)) then
+				love.graphics.draw(tiles, tile, x, y)
+			end
 		end
 	end
 	-- love.graphics.draw(p_image, love.graphics.getWidth() / 2 - 16, love.graphics.getHeight() / 2 - 20)
@@ -90,6 +104,7 @@ end
 
 overworldState = {
 	name = "Overworld",
+	has_moved = false,
 	init = function(party) 
 		
 		entities = {}
@@ -105,18 +120,25 @@ overworldState = {
 		table.insert(entities, player)
 
 
-		return entities
+		return {entities}
 	end,
 
 	onUpdate = function(dt) 
-		-- DO UPDATE STUFF
+		if has_moved then
+			world[player.map_pos.y][player.map_pos.x].onEnter()
+		end
 	end,
 
-	onKeyPress = function(key) 		
+	onKeyPress = function(key)
+
 		if key == "down" 	then player.map_pos.y = player.map_pos.y + 1 end
 		if key == "up"		then player.map_pos.y = player.map_pos.y - 1 end		
 		if key == "left"	then player.map_pos.x = player.map_pos.x - 1 end
 		if key == "right"	then player.map_pos.x = player.map_pos.x + 1 end
 		--if key == "return" 	then stateTransition("Menu") end
+		
+		if key == "down" or key == "up" or key == "left" or key == "right" then
+			has_moved = true
+		end
 	end
 }
