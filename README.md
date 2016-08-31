@@ -1,3 +1,2 @@
-TODO:
-	- Make battle system turn based
-	- Enemy turns for now can be simply attack a random character from the party
+# TODO
+- Make an NPC who has 2 lines of dialogue, in Kitala, for proof of concept of the mechanic
