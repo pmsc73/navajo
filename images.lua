@@ -24,7 +24,12 @@ pres = {
 
 	-- MISC, MENU STUFF
 	arrow		= love.graphics.newImage("res/img/arrow.png"),
-	background  = love.graphics.newImage("res/img/bg.png")
+	background  = love.graphics.newImage("res/img/bg.png"),
+
+	-- LOCAL MAP FILES
+	thern		= love.graphics.newImage("res/test.png")
+
+
 }
 for _, image in pairs(pres) do
 	image:setFilter("nearest", "nearest")

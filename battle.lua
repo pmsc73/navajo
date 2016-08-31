@@ -38,6 +38,7 @@ function battleSystem.dealDamage(t, source, target, element)
 		target.dead = true
 	end
 end
+
 function battleSystem.heal(character, base_modifier) 
 	base_modifier = math.floor(base_modifier + 0.5)
 	character.stats.currentHp = math.min(character.stats.currentHp + base_modifier, maxHpFormula(character))

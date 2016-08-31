@@ -1,20 +1,21 @@
 -- Local Map States
 require 'battle'
 require 'character'
-
+require 'images'
 require 'state'
 
 local map_state
 map_state = function(name, map_file)
-	local ents = {}
-	local img = love.graphics.newImage(map_file)
-	table.insert(ents, {image=img, pos={x=0, y=0}})
-	table.insert(ents, karna)
-	local s = state(name, ents, function(dt) return nil end)
+	local s = {}
+	s.name = name
+	s.onUpdate = function(dt) return nil end
+	local img = map_file
+
+	s.init = function(party) return { {{image=img, pos={x=0, y=0}}, karna} }  end
 	return s
 end
 
-local thern = map_state("THERN", 'res/test.png')
+local thern = map_state("THERN", res.thern)
 
 
 
