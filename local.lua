@@ -67,7 +67,7 @@ map_state = function(name, map_file, map_data)
 			if hasMoved then s.current_dialogue = 1 end
 			if findNearestNPC(karna) ~= nil then
 				local npc = findNearestNPC(karna)
-				table.insert(s.entities, textEntity(npc.dialogue[s.current_dialogue], 64, 64 + 12*s.current_dialogue))
+				table.insert(s.entities, textEntity(npc.dialogue[s.current_dialogue], npc.pos.x*32 + 40, npc.pos.y*32 + 10 + 12*s.current_dialogue))
 				s.current_dialogue = s.current_dialogue + 1
 				hasMoved = false
 			end
@@ -82,6 +82,9 @@ map_state = function(name, map_file, map_data)
 		end
 
 	end
+	s.scale = function()
+		love.graphics.scale(1.25, 1.25)
+	end
 	return s
 end
 
@@ -89,7 +92,7 @@ local kitala = map_state("KITALA", res.kitala, mapdata.kitala)
 
 function findNearestNPC(char)
 	for _, npc in pairs(npc_entities) do
-		local distance = math.sqrt((npc.pos.x - char.pos.x) ^ 2 + (npc.pos.y - char.pos.y) ^ 2)
+		local distance = math.sqrt(((npc.pos.x*32) - char.pos.x) ^ 2 + ((npc.pos.y*32) - char.pos.y) ^ 2)
 		if distance <= 40 then
 			return npc
 		end
@@ -103,4 +106,3 @@ end
 function localMapState() 
 	return kitala
 end
-

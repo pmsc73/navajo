@@ -34,6 +34,8 @@ function love.load()
 		"1234567890!@#%^&*()-_=[]{}.?/:\\~|<>;"
 		)
 	love.graphics.setFont(font)
+
+	love.window.setMode(640, 480)
 end
 
 function love.keypressed(key, scancode, isrepeat)
@@ -61,7 +63,8 @@ end
 
 -- Draw function gets deligated to the state object
 function love.draw()
-	-- love.graphics.scale(2.0, 2.0)
+
+	current_state.scale()
 
 	for depth, entity in ipairs(current_state.entities) do
 		if entity.render ~= nil then

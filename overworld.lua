@@ -124,6 +124,10 @@ overworldState = {
 		table.insert(overworldState.entities, player)
 	end,
 
+	scale = function() 
+		love.graphics.scale(1.0, 1.0)
+	end,
+
 	onUpdate = function(dt) 
 		if has_moved then
 			world[player.map_pos.y][player.map_pos.x].onEnter()
