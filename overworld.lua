@@ -3,6 +3,9 @@
 require 'local'
 	-- localMapState
 
+require 'mapdata'
+	-- for mapdata
+
 local mk = require('multikey')
 local get, put = mk.get, mk.put
 
@@ -107,20 +110,18 @@ overworldState = {
 	has_moved = false,
 	init = function(party) 
 		
-		entities = {}
+		overworldState.entities = {}
 		player = party[1]
 		player.pos = { x = love.graphics.getWidth() / 2 - 16, y = love.graphics.getHeight() / 2 - 20 }
 
 		e_tiles = {}
 		e_tiles.render = function()
 			draw_world(player.image, player.map_pos.x, player.map_pos.y)
+
 		end
 
-		table.insert(entities, e_tiles)
-		table.insert(entities, player)
-
-
-		return {entities}
+		table.insert(overworldState.entities, e_tiles)
+		table.insert(overworldState.entities, player)
 	end,
 
 	onUpdate = function(dt) 

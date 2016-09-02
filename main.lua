@@ -51,7 +51,7 @@ end
 function love.update(dt)
 	onNextUpdate()
 	if state_changed then 
-		current_state.entities = current_state.init(party)[1]
+		current_state.init(party)
 		-- current_state.queue = current_state.init(party)[2]
 		state_changed = false
 	end
