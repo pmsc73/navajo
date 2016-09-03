@@ -33,6 +33,7 @@ map_state = function(name, map_file, map_data)
 	local s = {}
 	s.name = name
 	s.entities = {}
+	s.tiles = {}
 	s.onUpdate = function(dt) return nil end
 	local img = map_file
 
@@ -42,10 +43,14 @@ map_state = function(name, map_file, map_data)
 		karna.pos.y = 0
 
 
-		for _, drawable in pairs(getDrawable(map_data, tiles)) do
-			table.insert(s.entities, drawable)
+		for _, drawable in pairs(getDrawable(karna.pos.x, karna.pos.y, map_data, tiles)) do
+			table.insert(s.tiles, drawable)
 		end
 
+
+		for _, tile in pairs(s.tiles) do 
+			table.insert(s.entities, tile)
+		end
 		table.insert(s.entities, {image=img, pos={x=0, y=0}})
 		table.insert(s.entities, karna)
 		table.insert(s.entities, testNPC)
@@ -65,7 +70,7 @@ map_state = function(name, map_file, map_data)
 				hasMoved = false
 			end
 		end
-		hasMoved = phys.handle_movement_input(karna, key, mapdata.kitala, npc_entities)
+		hasMoved = phys.handle_movement_input(s, karna, key, map_data, npc_entities)
 
 	end
 	s.scale = function()

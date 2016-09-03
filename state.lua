@@ -26,24 +26,22 @@ end
 
 phys = {}
 
-function phys.handle_movement_input(actor, key, map, npcs)
+function phys.handle_movement_input(s, actor, key, map, npcs)
 	local newPos = {x = actor.pos.x, y = actor.pos.y}
 	if key == "up" then 
 		newPos.y = newPos.y - 1
-	end
 
-	if key == "down" then
+	elseif key == "down" then
 		newPos.y = newPos.y + 1
-	end
 
-	if key == "left" then
+	elseif key == "left" then
 		newPos.x = newPos.x - 1
-	end
 
-	if key == "right" then
+	elseif key == "right" then
 		newPos.x = newPos.x + 1
-	end
 
+	else return false end
+	
 	if newPos.y + 1 > #map.tiles or 
 		newPos.y < 0 or 
 		newPos.x < 0 or 
@@ -64,6 +62,7 @@ function phys.handle_movement_input(actor, key, map, npcs)
 		actor.pos.y = newPos.y
 		return true
 	end
+
 
 	return false
 end

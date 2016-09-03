@@ -74,7 +74,7 @@ function love.draw()
 		if entity.render ~= nil then
 			entity.render()
 		elseif entity.image ~= nil then
-			love.graphics.draw(entity.image, entity.pos.x * TILE_SIZE, entity.pos.y * TILE_SIZE)
+			love.graphics.draw(entity.image, (entity.pos.x +7  - karna.pos.x)* TILE_SIZE, (entity.pos.y +5 - karna.pos.y) * TILE_SIZE)
 		end
 	end
 	if current_state.menu ~= nil then
