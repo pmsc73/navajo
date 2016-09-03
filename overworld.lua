@@ -112,7 +112,7 @@ overworldState = {
 		
 		overworldState.entities = {}
 		player = party[1]
-		player.pos = { x = love.graphics.getWidth() / 2 - 16, y = love.graphics.getHeight() / 2 - 20 }
+		player.pos = { x = 0, y= 0 }
 
 		e_tiles = {}
 		e_tiles.render = function()

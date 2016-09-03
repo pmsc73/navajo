@@ -28,12 +28,6 @@ local testNPC2 = {
 
 local npc_entities = {testNPC, testNPC2}
 
-for _, npc in pairs(npc_entities) do
-	npc.render = function() 
-		love.graphics.draw(npc.image, npc.pos.x*32, npc.pos.y*32)
-	end
-end
-
 local map_state
 map_state = function(name, map_file, map_data)
 	local s = {}
@@ -62,7 +56,6 @@ map_state = function(name, map_file, map_data)
 
 	local hasMoved = false
 	s.onKeyPress = function(key) 
-		local x,y = karna.pos.x, karna.pos.y
 		if key == "return" then
 			if hasMoved then s.current_dialogue = 1 end
 			if findNearestNPC(karna) ~= nil then
@@ -72,14 +65,7 @@ map_state = function(name, map_file, map_data)
 				hasMoved = false
 			end
 		end
-		if key == "up" then karna.pos.y = karna.pos.y - 32 end
-		if key == "down" then karna.pos.y = karna.pos.y + 32 end
-		if key == "left" then karna.pos.x = karna.pos.x - 32 end
-		if key == "right" then karna.pos.x = karna.pos.x + 32 end
-
-		if x ~= karna.pos.x or y ~= karna.pos.y then
-			hasMoved = true
-		end
+		hasMoved = phys.handle_movement_input(karna, key, mapdata.kitala, npc_entities)
 
 	end
 	s.scale = function()
@@ -92,8 +78,8 @@ local kitala = map_state("KITALA", res.kitala, mapdata.kitala)
 
 function findNearestNPC(char)
 	for _, npc in pairs(npc_entities) do
-		local distance = math.sqrt(((npc.pos.x*32) - char.pos.x) ^ 2 + ((npc.pos.y*32) - char.pos.y) ^ 2)
-		if distance <= 40 then
+		local distance = math.sqrt( (npc.pos.x - char.pos.x) ^ 2 + (npc.pos.y - char.pos.y) ^ 2)
+		if distance <= 1 then
 			return npc
 		end
 	end

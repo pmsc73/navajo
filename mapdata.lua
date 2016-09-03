@@ -23,7 +23,6 @@ mapdata.kitala = {
 	tileMappings = {{0,0}}
 }
 
-
 local tileData = {
 	[0] = {0, 0, 32, 32},
 	[1] = {160, 32, 32, 32},

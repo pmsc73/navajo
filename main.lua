@@ -16,6 +16,10 @@ require('battle')
 require('character')
 	-- for party members: karna, alnar, lysh, nez
 
+-- this constant is used for drawing all entities in line with tiles
+TILE_SIZE = 32
+
+
 local current_state = overworldState
 state_changed = true
 onNextUpdate = function() return nil end
@@ -70,7 +74,7 @@ function love.draw()
 		if entity.render ~= nil then
 			entity.render()
 		elseif entity.image ~= nil then
-			love.graphics.draw(entity.image, entity.pos.x, entity.pos.y)
+			love.graphics.draw(entity.image, entity.pos.x * TILE_SIZE, entity.pos.y * TILE_SIZE)
 		end
 	end
 	if current_state.menu ~= nil then
