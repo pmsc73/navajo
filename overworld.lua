@@ -77,11 +77,11 @@ function generateWorld(img)
 	return w
 end
 
-local world = generateWorld("res/map.png")
+local overworld = generateWorld("res/map.png")
 
 local HEIGHT = 19
 local WIDTH = 25
-function draw_world(p_image, px, py)
+function draw_world(p_image, px, py, tileset, world)
 	for i = 1, HEIGHT do
 		for j = 1, WIDTH do
 			local x = 32*(j-1)
@@ -96,9 +96,9 @@ function draw_world(p_image, px, py)
 				tx = (world[pi][pj].tileId % 10 ) * 32
 				ty = 32
 			end
-			local tile = love.graphics.newQuad(tx, ty, 32, 32, tiles:getDimensions()) 
+			local tile = love.graphics.newQuad(tx, ty, 32, 32, tileset:getDimensions()) 
 			if(not (pi == py and pj == px)) then
-				love.graphics.draw(tiles, tile, x, y)
+				love.graphics.draw(tileset, tile, x, y)
 			end
 		end
 	end
@@ -116,7 +116,7 @@ overworldState = {
 
 		e_tiles = {}
 		e_tiles.render = function()
-			draw_world(player.image, player.map_pos.x, player.map_pos.y)
+			draw_world(player.image, player.map_pos.x, player.map_pos.y, tiles, overworld)
 
 		end
 
@@ -130,7 +130,7 @@ overworldState = {
 
 	onUpdate = function(dt) 
 		if has_moved then
-			world[player.map_pos.y][player.map_pos.x].onEnter()
+			overworld[player.map_pos.y][player.map_pos.x].onEnter()
 		end
 	end,
 
@@ -140,7 +140,6 @@ overworldState = {
 		if key == "up"		then player.map_pos.y = player.map_pos.y - 1 end		
 		if key == "left"	then player.map_pos.x = player.map_pos.x - 1 end
 		if key == "right"	then player.map_pos.x = player.map_pos.x + 1 end
-		--if key == "return" 	then stateTransition("Menu") end
 		
 		if key == "down" or key == "up" or key == "left" or key == "right" then
 			has_moved = true
