@@ -62,7 +62,7 @@ function generateWorld(img)
 				changestate(localMapState())
 			end
 			local tile = {
-				tileId = get(t, appr[1], appr[2], appr[3], appr[4]),
+				tileId = 0,
 				
 				onEnter = function()
 					if get(t, appr[1], appr[2], appr[3], appr[4]) == 17 then
@@ -114,17 +114,20 @@ overworldState = {
 		player = party[1]
 		player.pos = { x = 0, y= 0 }
 
-		e_tiles = {}
-		e_tiles.render = function()
-			draw_world(player.image, player.map_pos.x, player.map_pos.y, tiles, overworld)
+		-- e_tiles = {}
+		-- e_tiles.render = function()
+		-- 	draw_world(player.image, player.map_pos.x, player.map_pos.y, tiles, overworld)
 
+		-- end
+		for _, tile in pairs(getDrawable(player, overworld, tiles)) do
+			table.insert(overworldState.entities, tile)
 		end
 
-		table.insert(overworldState.entities, e_tiles)
+		table.insert(overworldState.entities, getDrawable(player, overworld, tiles ))
 		table.insert(overworldState.entities, player)
 	end,
 
-	scale = function() 
+	scale = function()
 		love.graphics.scale(1.0, 1.0)
 	end,
 
@@ -135,14 +138,6 @@ overworldState = {
 	end,
 
 	onKeyPress = function(key)
-
-		if key == "down" 	then player.map_pos.y = player.map_pos.y + 1 end
-		if key == "up"		then player.map_pos.y = player.map_pos.y - 1 end		
-		if key == "left"	then player.map_pos.x = player.map_pos.x - 1 end
-		if key == "right"	then player.map_pos.x = player.map_pos.x + 1 end
-		
-		if key == "down" or key == "up" or key == "left" or key == "right" then
-			has_moved = true
-		end
+		has_moved = phys.handle_movement_input(player, key, overworld, nil)
 	end
 }

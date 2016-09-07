@@ -4,9 +4,8 @@
 mapdata = {}
 
 -- LOCAL MAP DIMENSIONS ARE 16x12
-
-mapdata.kitala = {
-	tiles = {
+tileIds = {}
+tileIds.kitala = {
 		{1,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 		{1,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 		{1,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -30,17 +29,37 @@ mapdata.kitala = {
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
-
-	}
 }
-
+mapdata.kitala = {}
+for i = 1, #tileIds.kitala do
+	mapdata.kitala[i] = {}
+	for j = 1, #tileIds.kitala[i] do
+		mapdata.kitala[i][j] = {}
+		mapdata.kitala[i][j].tileId = tileIds.kitala[i][j]
+	end
+end
 
 local n1 = "-1"
 local tileData = {
-	n1 = {288, 32, 32, 32},
+	n1 = {192, 32, 32, 32},
 	[0]  = {0, 0, 32, 32},
 	[1]  = {160, 32, 32, 32},
-	[2]  = {256, 32, 32, 32}
+	[2]  = {256, 32, 32, 32},
+	[3]  = {160, 32, 32, 32},
+	[4]  = {160, 32, 32, 32},
+	[5]  = {160, 32, 32, 32},
+	[6]  = {160, 32, 32, 32},
+	[7]  = {160, 32, 32, 32},
+	[8]  = {160, 32, 32, 32},
+	[9]  = {160, 32, 32, 32},
+	[10]  = {160, 32, 32, 32},
+	[11]  = {160, 32, 32, 32},
+	[12]  = {160, 32, 32, 32},
+	[13]  = {160, 32, 32, 32},
+	[14]  = {160, 32, 32, 32},
+	[15]  = {160, 32, 32, 32},
+	[16]  = {160, 32, 32, 32},
+	[17]  = {160, 32, 32, 32},
 }
 
 
@@ -48,26 +67,30 @@ local tileData = {
 
 local WIDTH, HEIGHT = 16, 12
 
-function getDrawable(px, py, mdata, tile_res)
+function getDrawable(player, mdata, tile_res, width, height)
+	if width == nil then width = WIDTH end
+	if height == nil then height = HEIGHT end
+
 	local toDraw = {}
-	for i = 1, #mdata.tiles do
-		for j = 1, #mdata.tiles[i] do
+	for i = 1, #mdata do
+		for j = 1, #mdata[i] do
 			local x_index = 0
 			local y_index = 0
 
 			local tile = {}
-			local tdata
-			if mdata.tiles[y_index + i] and mdata.tiles[y_index + i][x_index + j] then 
-				tdata = tileData[mdata.tiles[y_index + i][x_index + j]]
+			local tdata = {32, 0, 32, 32}
+			if mdata[y_index + i] and mdata[y_index + i][x_index + j] then 
+				tdata = tileData[mdata[y_index + i][x_index + j].tileId]
 			else
 				tdata = tileData.n1
 			end
+
 			local tx, ty, w, h = tdata[1], tdata[2], tdata[3], tdata[4]
 
 
 			tile.t = love.graphics.newQuad(tx, ty, w, h, tile_res:getDimensions())
 			tile.render = function() 
-				love.graphics.draw(tile_res, tile.t, ( j - karna.pos.x + 6)*32, (i - karna.pos.y + 4)*32)
+				love.graphics.draw(tile_res, tile.t, ( j - player.pos.x + 6)*32, (i - player.pos.y + 4)*32)
 			end
 			table.insert(toDraw, tile)
 		end

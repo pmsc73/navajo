@@ -36,14 +36,14 @@ map_state = function(name, map_file, map_data)
 	s.tiles = {}
 	s.onUpdate = function(dt) return nil end
 	local img = map_file
-
+	
 	s.init = function(party)
 
-		karna.pos.x = 0
-		karna.pos.y = 0
+		karna.pos.x = 6
+		karna.pos.y = 6
 
 
-		for _, drawable in pairs(getDrawable(karna.pos.x, karna.pos.y, map_data, tiles)) do
+		for _, drawable in pairs(getDrawable(karna, map_data, tiles)) do
 			table.insert(s.tiles, drawable)
 		end
 
@@ -70,7 +70,7 @@ map_state = function(name, map_file, map_data)
 				hasMoved = false
 			end
 		end
-		hasMoved = phys.handle_movement_input(s, karna, key, map_data, npc_entities)
+		hasMoved = phys.handle_movement_input(karna, key, map_data, npc_entities)
 
 	end
 	s.scale = function()
@@ -79,7 +79,7 @@ map_state = function(name, map_file, map_data)
 	return s
 end
 
-local kitala = map_state("KITALA", res.kitala, mapdata.kitala)
+kitala = map_state("KITALA", res.kitala, mapdata.kitala)
 
 function findNearestNPC(char)
 	for _, npc in pairs(npc_entities) do

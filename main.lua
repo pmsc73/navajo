@@ -7,6 +7,8 @@
 
 -- REQUIRES
 
+require('local')
+
 require('overworld')
 	-- for overworldState
 
@@ -20,7 +22,7 @@ require('character')
 TILE_SIZE = 32
 
 
-local current_state = overworldState
+local current_state = battleState
 state_changed = true
 onNextUpdate = function() return nil end
 
@@ -67,8 +69,7 @@ end
 
 -- Draw function gets deligated to the state object
 function love.draw()
-
-	current_state.scale()
+	if current_state.scale then current_state.scale() end
 
 	for depth, entity in ipairs(current_state.entities) do
 		if entity.render ~= nil then
