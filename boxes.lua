@@ -2,6 +2,10 @@
 
 function menu_rectangle(x, y, w, h) 
 	return {
+		x = x,
+		y = y,
+		w = w,
+		h = h,
 		render = function() 
 			love.graphics.setColor(70,120, 210)
 			love.graphics.rectangle("fill", x, y, w, h)

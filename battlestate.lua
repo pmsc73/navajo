@@ -29,17 +29,20 @@ battleState = {
 
 		table.insert(battleState.entities, background)
 
-		local m_menu = menu_rectangle(0,210, 400, 100)
+		local m_menu = menu_rectangle(0,168, 320, 80)
 		table.insert(battleState.entities, m_menu)
 
 		for i, char in ipairs(party) do
-			char.pos = { x = 340, y = 32 + (i-1)*42 }
+			char.pos = { x = 272, y = 10 + (i-1)*32 }
 
 			char.render = function() 
-				gfx.print(char.name, 231, 221 + (20*(i-1)))
+				local charline = {x = m_menu.w - 154, y = m_menu.y + 5 + (16*(i-1))}
+
+				gfx.print(char.name, charline.x, charline.y)
+
 				local health = maxHpFormula(char)
-				gfx.print("\\ " .. char.stats.currentHp .. " / " .. health, 261, 221 + (20*(i-1)))
-				gfx.print("~ " .. char.stats.currentMp .. " / " .. maxMp(char), 301, 221 + (20*(i-1)))
+				gfx.print("\\ " .. char.stats.currentHp .. " / " .. health, charline.x + 25, charline.y)
+				gfx.print("~ " .. char.stats.currentMp .. " / " .. maxMp(char), charline.x + 70, charline.y)
 				love.graphics.draw(char.image, char.pos.x, char.pos.y)
 			end
 
@@ -48,11 +51,13 @@ battleState = {
 
 		for i, enemy in ipairs(get_enemies()) do
 			enemy.render = function() 
-				gfx.print(enemy.name, 25, 220 + 15*(i-1))
+				local charline = {x = m_menu.x + 7, y = m_menu.y + 5 + (16*(i-1))}
+
+				gfx.print(enemy.name, charline.x, charline.y)
 				if enemy.stats.currentHp == nil then
 					enemy.stats.currentHp = maxHpFormula(enemy)
 				end
-				gfx.drawStatusBar(75,221 + 15*(i-1), 7, 60, maxHpFormula(enemy), enemy.stats.currentHp, {255,0,0}, {255, 255, 255})
+				gfx.drawStatusBar(charline.x + 35, charline.y, 7, 60, maxHpFormula(enemy), enemy.stats.currentHp, {255,0,0}, {255, 255, 255})
 
 				love.graphics.draw(enemy.image, enemy.pos.x, enemy.pos.y)
 			end
@@ -83,7 +88,7 @@ battleState = {
 	end, 
 
 	scale = function()
-		love.graphics.scale(1.6, 1.6)
+		love.graphics.scale(2.0, 2.0)
 	end,
 
 	onUpdate = function(dt) 
