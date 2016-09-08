@@ -6,6 +6,17 @@ mymenu.__index = mymenu
 -- Class Methods
 function mymenu.new(name, selections, callback, ax, ay_offset, ay)
 	local o = {}
+
+	o.render = function() 
+		if not ay then
+			ay = 100
+		end
+		for i, sel in  ipairs(selections) do
+			gfx.print(sel, ax, ay + (i*ay_offset))
+		end
+	end
+
+
 	o.name = name
 	o.selections = selections
 	o.s_index = 1
