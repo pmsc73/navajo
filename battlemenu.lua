@@ -93,11 +93,13 @@ function skillMenu(party, character, enemies)
 	-- get them selections otg
 	for _, skill in pairs(character.skills) do
 		local subMenu = {} 
-		for _, selection in pairs(target_table[skill.targets]) do
-			newSelection(subMenu, selection, 
-				function() return skill.use(selection) end
-			)
-		end
+		if target_table[skill.targets] then
+			for _, selection in pairs(target_table[skill.targets]) do
+				newSelection(subMenu, selection, 
+					function() return skill.use(selection) end
+				)
+			end
+		end	
 		subMenu = mymenu.new(skill.name, subMenu, nil, 50,44,-16)
 		newSelection(menu, subMenu, nil)
 	end
