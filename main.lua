@@ -12,7 +12,7 @@ require('local')
 require('overworld')
 	-- for overworldState
 
-require('battle')
+require('battlestate')
 	-- for battleState
 
 require('character')
