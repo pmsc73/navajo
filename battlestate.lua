@@ -1,6 +1,8 @@
 -- battlestate.lua
 
+require 'menu2'
 require 'battlemenu'
+require 'images'
 require 'battle'
 
 function get_enemies() 
@@ -29,14 +31,28 @@ battleState = {
 
 		table.insert(battleState.entities, background)
 
-		local m_menu = menu_rectangle(0,168, 320, 80)
+		local m_menu = menu_rectangle(0,168, 320, 72)
+		local b_menubox = menu_rectangle(m_menu.w - 50, m_menu.y + 3, 45, 65)
+
+		b_menuitems = {"ATTACK", "SKILL", "MAGIC", "ITEM", "ESCAPE"}
+		
+		b_menu = new_menu(
+			b_menuitems, 
+			{b_menubox.x, b_menubox.y},
+			{3, 3},
+			{0, 12}
+		)
+		handleUpDown(b_menu)
+
 		table.insert(battleState.entities, m_menu)
+		table.insert(battleState.entities, b_menubox)
+		table.insert(battleState.entities, b_menu)
 
 		for i, char in ipairs(party) do
 			char.pos = { x = 272, y = 10 + (i-1)*32 }
 
 			char.render = function() 
-				local charline = {x = m_menu.w - 154, y = m_menu.y + 5 + (16*(i-1))}
+				local charline = {x = m_menu.w - 164, y = m_menu.y + 5 + (16*(i-1))}
 
 				gfx.print(char.name, charline.x, charline.y)
 
@@ -96,6 +112,6 @@ battleState = {
 	end,
 
 	onKeyPress = function(key) 
-		-- HANDLE KEY PRESSES
+		handleKeyPress(b_menu)
 	end
 }
