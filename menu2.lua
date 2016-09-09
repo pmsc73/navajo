@@ -1,7 +1,5 @@
 -- menu object
 
-
-
 function new_menu(selections, pos, padding, spacing)
 	local menu = {}
 	menu.selections = selections
@@ -23,7 +21,7 @@ function handleLeftRight(menu)
 	menu.is_handleLeftRight = true
 end
 
-function handleKeyPress(menu) 
+function handleKeyPress(menu,key) 
 		if key == "up" then
 			menu.selected = menu.selected - 1
 		end

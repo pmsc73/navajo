@@ -112,6 +112,6 @@ battleState = {
 	end,
 
 	onKeyPress = function(key) 
-		handleKeyPress(b_menu)
+		handleKeyPress(b_menu, key)
 	end
 }
