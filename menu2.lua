@@ -22,13 +22,13 @@ function handleLeftRight(menu)
 end
 
 function handleKeyPress(menu,key) 
-		if key == "up" then
-			menu.selected = menu.selected - 1
-		end
+	if key == "up" and menu.selected - 1 >= 1 then
+		menu.selected = menu.selected - 1
+	end
 
-		if key == "down" then
-			menu.selected = menu.selected + 1
-		end
+	if key == "down" and menu.selected + 1 <= #menu.selections then
+		menu.selected = menu.selected + 1
+	end
 end
 
 
@@ -39,5 +39,5 @@ function render(menu)
 		gfx.print(item, x, y)
 
 	end
-	love.graphics.draw(res.arrow, menu.pos.x + 30, menu.pos.y + (menu.selected-1)*menu.spacing.vertical)
+	love.graphics.draw(res.arrow, menu.pos.x + 34, menu.pos.y + (menu.selected-1)*menu.spacing.vertical)
 end

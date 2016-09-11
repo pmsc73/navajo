@@ -45,7 +45,7 @@ function love.load()
 end
 
 function love.keypressed(key, scancode, isrepeat)
-	if current_state.onKeyPress ~= nil then
+	if current_state.onKeyPress then
 		current_state.onKeyPress(key)
 	end
 end
