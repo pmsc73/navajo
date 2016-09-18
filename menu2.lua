@@ -13,15 +13,7 @@ function new_menu(selections, pos, padding, spacing)
 end
 
 
-function handleUpDown(menu)
-	menu.is_handlesUpDown = true
-end
-
-function handleLeftRight(menu)
-	menu.is_handleLeftRight = true
-end
-
-function handleKeyPress(menu,key) 
+function handleKeyPress(menu, key) 
 	if key == "up" and menu.selected - 1 >= 1 then
 		menu.selected = menu.selected - 1
 	end
@@ -29,6 +21,17 @@ function handleKeyPress(menu,key)
 	if key == "down" and menu.selected + 1 <= #menu.selections then
 		menu.selected = menu.selected + 1
 	end
+
+	if key == "return" and menu.selections[menu.selected].selections then 
+		menu.selections[menu.selected].previous = menu
+		return menu.selections[menu.selected]
+	end
+
+	if key == "backspace" and menu.previous then
+		return menu.previous
+	end
+
+	return menu
 end
 
 
@@ -36,7 +39,7 @@ function render(menu)
 	for i, item in ipairs(menu.selections) do 
 		local x = menu.pos.x + menu.padding.horizontal
 		local y = menu.pos.y + menu.padding.vertical + (i-1)*menu.spacing.vertical
-		gfx.print(item, x, y)
+		gfx.print(item.name, x, y)
 
 	end
 	love.graphics.draw(res.arrow, menu.pos.x + 34, menu.pos.y + (menu.selected-1)*menu.spacing.vertical)

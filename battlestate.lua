@@ -34,15 +34,33 @@ battleState = {
 		local m_menu = menu_rectangle(0,168, 320, 72)
 		local b_menubox = menu_rectangle(m_menu.w - 50, m_menu.y + 3, 45, 65)
 
-		b_menuitems = {"ATTACK", "SKILL", "MAGIC", "ITEM", "ESCAPE"}
+		b_menuitems = 
+		{
+			{
+				"Attack"
+			},
+			{
+				"Skill"
+			},
+			{
+				"Magic"
+			},
+			{
+				"Item"
+			},
+			{
+				"Escape"
+			}
+		}
 		
+		local enemies = get_enemies()
+
 		b_menu = new_menu(
-			b_menuitems, 
+			battlemenu.init(party, party[1], enemies), 
 			{b_menubox.x, b_menubox.y},
 			{3, 3},
 			{0, 12}
 		)
-		handleUpDown(b_menu)
 
 		table.insert(battleState.entities, m_menu)
 		table.insert(battleState.entities, b_menubox)
@@ -65,7 +83,7 @@ battleState = {
 			table.insert(battleState.entities, char)
 		end
 
-		for i, enemy in ipairs(get_enemies()) do
+		for i, enemy in ipairs(enemies) do
 			enemy.render = function() 
 				local charline = {x = m_menu.x + 7, y = m_menu.y + 5 + (16*(i-1))}
 
@@ -91,7 +109,7 @@ battleState = {
 			table.insert(actors, char)
 		end
 
-		for _, enemy in pairs(get_enemies()) do
+		for _, enemy in pairs(enemies) do
 			enemy.controllable = false
 			table.insert(actors, enemy)
 		end
@@ -99,7 +117,7 @@ battleState = {
 		q = battleQueueInit(actors)
 		table.insert(battleState.entities, q)
 
-		local battle_menu = battlemenu.init(party, party[1], get_enemies())
+		local battle_menu = battlemenu.init(party, q[1], enemies)
 		table.insert(battleState.entities, battle_menu)
 	end, 
 
@@ -112,6 +130,6 @@ battleState = {
 	end,
 
 	onKeyPress = function(key) 
-		handleKeyPress(b_menu, key)
+		b_menu = handleKeyPress(b_menu, key)
 	end
 }

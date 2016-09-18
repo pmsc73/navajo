@@ -11,107 +11,71 @@ require 'battle'
 ]]--
 
 battlemenu = {}
+
+local ATT_MENU_POS, ATT_MENU_PADDING, ATT_MENU_SPACING = {0,0}, {0,0}, {0,0}
+local SKL_MENU_POS, SKL_MENU_PADDING, SKL_MENU_SPACING = {0,0}, {0,0}, {0,0}
+local MAG_MENU_POS, MAG_MENU_PADDING, MAG_MENU_SPACING = {0,0}, {0,0}, {0,0}
+local ITM_MENU_POS, ITM_MENU_PADDING, ITM_MENU_SPACING = {0,0}, {0,0}, {0,0}
+local ESC_MENU_POS, ESC_MENU_PADDING, ESC_MENU_SPACING = {0,0}, {0,0}, {0,0}
+
+local attackSubMenu
+attackSubMenu = function(party, character, enemies)
+	local selections = {}
+	
+	for _, enemy in pairs(enemies) do
+		if not enemy.isDead then
+			local enemy_selection = enemy
+			table.insert(selections, {name = enemy.name})
+		end
+	end
+
+	local m = new_menu(selections, ATT_MENU_POS, ATT_MENU_PADDING, ATT_MENU_SPACING)
+	m.name = "Attack"
+	return m
+end
+
+
+local skillSubMenu
+skillSubMenu = function()
+	local menu = {name="Skill"}
+
+	return menu
+end
+
+local magicSubMenu
+magicSubMenu = function()
+	local menu = {name="Magic"}
+
+	return menu
+end
+
+local itemSubMenu
+itemSubMenu = function()
+	local menu = {name="Item"}
+
+	return menu
+end
+
+local escapeSubMenu
+escapeSubMenu = function()
+	local menu = {name="Escape"}
+
+	return menu
+end
+
 function battlemenu.init(party, character, enemies)
-	-- The top level menu
-	local menu = {}
+	local selections = {}
 
-	-- First level of menu selections
-	local option_attack = attackMenu(character, enemies)
-	local option_skill = skillMenu(party, character, enemies)
-	local option_magic = {"Magic"}
-	local option_item = {"Item"}
-	local option_escape = {"Escape"}
+	current_party = party
+	current_character = character
+	current_enemies = enemies
 
-	local cb_attack = function(target) 
-		battleSystem.processAttack(character, target)
-	end
 
-	local cb_skill = function(args)
-		args[1].use(args[2])
-	end
+	table.insert(selections, attackSubMenu(party, character, enemies))
+	table.insert(selections, skillSubMenu())
+	table.insert(selections, magicSubMenu())
+	table.insert(selections, itemSubMenu())
+	table.insert(selections, escapeSubMenu())
 
-	local cb_magic = function() return nil end
-
-	local cb_item = function() return nil end
-
-	local cb_escape = function() return love.quit() end
-
-	newSelection(menu, option_attack, nil)
-	newSelection(menu, option_skill, nil)
-	newSelection(menu, option_magic, nil)
-	newSelection(menu, option_item, nil)
-	newSelection(menu, option_escape, nil)
-
-	return mymenu.new("Battle", menu, nil, 380, 15)
-end
-
-function attackMenu(character, enemies)
-	local m = {}
-
-	for _, enemy in pairs(enemies) do
-		if not enemy.isDead then
-			enemy.callback = function() return nil end
-			newSelection(m, enemy, function() battleSystem.processAttack(character, enemy) end)
-		end
-	end
-
-	return mymenu.new("Attack", m, nil, 140, 15)
-end
-
-function skillMenu(party, character, enemies) 
-	local menu = {}
-
-	local single_target_list = {}
-	local aoe_target_list = {}
-	local self_target_list = {}
-	local none_target_list = {}
-
-	local target_table = {
-		["SINGLE"] = single_target_list,
-		["AOE"]	= aoe_target_list,
-		["SELF"] = self_target_list,
-		["NONE"] = none_target_list
-	}
-
-	-- SELF
-	table.insert(self_target_list, character)
-
-	-- AOE
-	table.insert(aoe_target_list, enemies)
-	table.insert(aoe_target_list, party)
-
-	-- SINGLE
-	for _, enemy in pairs(enemies) do
-		if not enemy.isDead then
-			table.insert(single_target_list, enemy)
-		end
-	end
-	for _, member in pairs(party) do 
-		table.insert(single_target_list, member)
-	end
-
-	-- get them selections otg
-	for _, skill in pairs(character.skills) do
-		local subMenu = {} 
-		if target_table[skill.targets] then
-			for _, selection in pairs(target_table[skill.targets]) do
-				newSelection(subMenu, selection, 
-					function() return skill.use(selection) end
-				)
-			end
-		end	
-		subMenu = mymenu.new(skill.name, subMenu, nil, 50,44,-16)
-		newSelection(menu, subMenu, nil)
-	end
-
-	return mymenu.new("Skill", menu, nil, 320, 15)
-end
-
--- creates new menu selection from a submenu
--- @param parent the parent menu
--- @param sub the selections sub menu, if it exists (should be a table)
--- @param callback a function to call when the selection is finished
-function newSelection(parent, sub, callback)
-	sub.callback = callback
-	table.insert(parent, sub)
+	return selections
 end
