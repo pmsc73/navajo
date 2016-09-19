@@ -21,7 +21,7 @@ skill.berserk =
 	description = "Increase offence, lower defence and lose control",
 	image = res.berserk,
 	targets = "SELF",
-	use = function(character) return nil end
+	use = function(character) character.image = res.berserk end
 }
 
 skill.defend = 

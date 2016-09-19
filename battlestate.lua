@@ -4,6 +4,7 @@ require 'menu2'
 require 'battlemenu'
 require 'images'
 require 'battle'
+require 'character'
 
 function get_enemies() 
 	zombie = {name = "Zombie", image=res.enemy_zombie, pos={x=10, y=20}}
@@ -34,33 +35,9 @@ battleState = {
 		local m_menu = menu_rectangle(0,168, 320, 72)
 		local b_menubox = menu_rectangle(m_menu.w - 50, m_menu.y + 3, 45, 65)
 
-		b_menuitems = 
-		{
-			{
-				"Attack"
-			},
-			{
-				"Skill"
-			},
-			{
-				"Magic"
-			},
-			{
-				"Item"
-			},
-			{
-				"Escape"
-			}
-		}
-		
 		local enemies = get_enemies()
 
-		b_menu = new_menu(
-			battlemenu.init(party, party[1], enemies), 
-			{b_menubox.x, b_menubox.y},
-			{3, 3},
-			{0, 12}
-		)
+		b_menu = battlemenu.init(party, lysh, enemies, {b_menubox.x, b_menubox.y}, {3, 3}, {0, 12})
 
 		table.insert(battleState.entities, m_menu)
 		table.insert(battleState.entities, b_menubox)
@@ -117,7 +94,6 @@ battleState = {
 		q = battleQueueInit(actors)
 		table.insert(battleState.entities, q)
 
-		local battle_menu = battlemenu.init(party, q[1], enemies)
 		table.insert(battleState.entities, battle_menu)
 	end, 
 
@@ -129,7 +105,16 @@ battleState = {
 		-- DO UPDATE STUFF
 	end,
 
-	onKeyPress = function(key) 
-		b_menu = handleKeyPress(b_menu, key)
+	onKeyPress = function(key)
+		local next_menu = handleKeyPress(b_menu, key)
+		for i, v in ipairs(battleState.entities) do
+			if v == b_menu then
+				
+					table.remove(battleState.entities, i)
+				
+			end
+		end
+		b_menu = next_menu
+		table.insert(battleState.entities, b_menu)
 	end
 }

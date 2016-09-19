@@ -7,7 +7,7 @@ function menu_rectangle(x, y, w, h)
 		w = w,
 		h = h,
 		render = function() 
-			love.graphics.setColor(70,120, 210)
+			love.graphics.setColor(32,32,32)
 			love.graphics.rectangle("fill", x, y, w, h)
 			love.graphics.setColor(255,255,255)
 			love.graphics.rectangle("line", x, y, w, h)

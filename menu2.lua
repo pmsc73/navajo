@@ -7,7 +7,9 @@ function new_menu(selections, pos, padding, spacing)
 	menu.pos = {x = pos[1], y = pos[2]}
 	menu.padding = {horizontal = padding[1], vertical = padding[2]}
 	menu.spacing = {horizontal = spacing[1], vertical = spacing[2]}
-	menu.render = function() render(menu) end
+	menu.render = function()
+		render(menu) 
+	end
 
 	return menu
 end
@@ -22,9 +24,15 @@ function handleKeyPress(menu, key)
 		menu.selected = menu.selected + 1
 	end
 
-	if key == "return" and menu.selections[menu.selected].selections then 
-		menu.selections[menu.selected].previous = menu
-		return menu.selections[menu.selected]
+	if key == "return"  then 
+		if menu.selections[menu.selected].action then
+			menu.selections[menu.selected].action() 
+		end
+		
+		if menu.selections[menu.selected].selections then
+			menu.selections[menu.selected].previous = menu
+			return menu.selections[menu.selected]
+		end
 	end
 
 	if key == "backspace" and menu.previous then
@@ -42,5 +50,7 @@ function render(menu)
 		gfx.print(item.name, x, y)
 
 	end
-	love.graphics.draw(res.arrow, menu.pos.x + 34, menu.pos.y + (menu.selected-1)*menu.spacing.vertical)
+	-- if menu.previous then 
+		love.graphics.draw(res.arrow, menu.pos.x + 34, menu.pos.y + (menu.selected-1)*menu.spacing.vertical)
+	-- end
 end
