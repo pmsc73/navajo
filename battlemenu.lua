@@ -1,5 +1,6 @@
 require 'battle'
 require 'boxes'
+require 'local'
 
 -- battle menu
 
@@ -50,7 +51,7 @@ skillSubMenu = function(party, character, enemies)
 	for _, skill in pairs(character.skills) do
 		local targets = target_list[skill.targets]
 		local targets_selections = {}
-		for _, target in pairs(enemies) do
+		for _, target in pairs(targets) do
 				table.insert(targets_selections, {name = "", action = function() skill.use(target) end})
 		end
 		skill_selection = new_menu(targets_selections, ATT_MENU_POS, ATT_MENU_PADDING, ATT_MENU_SPACING)
@@ -88,7 +89,7 @@ end
 local escapeSubMenu
 escapeSubMenu = function()
 	local menu = {name="Escape"}
-
+	menu.action = function() changestate(kitala) end
 	return menu
 end
 
@@ -96,7 +97,7 @@ function battlemenu.init(party, character, enemies, pos, padding, spacing)
 	local selections = {}
 
 	target_list = {
-		["SELF"] = character,
+		["SELF"] = {character},
 		["ALLY"] = party,
 		["SINGLE"] = enemies,
 		["AOE"] = {enemies, party}

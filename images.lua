@@ -7,6 +7,8 @@ pres = {
 	lysh		= love.graphics.newImage("res/img/lysh-base.png"),
 	nez			= love.graphics.newImage("res/img/nez-base.png"),
 
+	karna_berserk = love.graphics.newImage("res/img/karna-berserk.png"),
+
 	-- SKILL ICONS
 	berserk 	= love.graphics.newImage("res/img/berserk.png"),
 	defend		= love.graphics.newImage("res/img/defend.png"),

@@ -37,7 +37,7 @@ battleState = {
 
 		local enemies = get_enemies()
 
-		b_menu = battlemenu.init(party, lysh, enemies, {b_menubox.x, b_menubox.y}, {3, 3}, {0, 12})
+		b_menu = battlemenu.init(party, karna, enemies, {b_menubox.x, b_menubox.y}, {3, 3}, {0, 12})
 
 		table.insert(battleState.entities, m_menu)
 		table.insert(battleState.entities, b_menubox)
