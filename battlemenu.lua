@@ -14,7 +14,7 @@ require 'local'
 
 local ATT_MENU_POS, ATT_MENU_PADDING, ATT_MENU_SPACING = {80, 168}, {5,5}, {0,16}
 local SKL_MENU_POS, SKL_MENU_PADDING, SKL_MENU_SPACING = {125, 171}, {3,3}, {0,12}
-local MAG_MENU_POS, MAG_MENU_PADDING, MAG_MENU_SPACING = {0,0}, {0,0}, {0,0}
+local MAG_MENU_POS, MAG_MENU_PADDING, MAG_MENU_SPACING = {125, 171}, {3,3}, {0,12}
 local ITM_MENU_POS, ITM_MENU_PADDING, ITM_MENU_SPACING = {0,0}, {0,0}, {0,0}
 local ESC_MENU_POS, ESC_MENU_PADDING, ESC_MENU_SPACING = {0,0}, {0,0}, {0,0}
 
@@ -74,8 +74,23 @@ end
 
 local magicSubMenu
 magicSubMenu = function()
-	local menu = {name="Magic"}
+	local spells = {
+		{name = "Fire <"},
+		{name = "Thunder >"},
+		{name = "Nature ;"}, 
+		{name = "Water \""}
+	}
+	local menu = new_menu(spells, MAG_MENU_POS, MAG_MENU_PADDING, MAG_MENU_SPACING)
+	local r = menu.render
+	
 
+
+	local magicbox = menu_rectangle(MAG_MENU_POS[1], MAG_MENU_POS[2], 140, 65)
+	menu.render = function()
+		magicbox.render()
+		r()
+	end
+	menu.name = "Magic"
 	return menu
 end
 

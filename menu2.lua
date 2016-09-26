@@ -27,6 +27,12 @@ function handleKeyPress(menu, key)
 	if key == "return"  then 
 		if menu.selections[menu.selected].action then
 			menu.selections[menu.selected].action() 
+			r = menu
+			while (r.previous) do
+				r = r.previous
+			end
+			r.complete = true
+			return r
 		end
 		
 		if menu.selections[menu.selected].selections then
@@ -51,6 +57,6 @@ function render(menu)
 
 	end
 	-- if menu.previous then 
-		love.graphics.draw(res.arrow, menu.pos.x + 34, menu.pos.y + (menu.selected-1)*menu.spacing.vertical)
+		love.graphics.draw(res.arrow, menu.pos.x + 34, -1 + menu.pos.y + (menu.selected-1)*menu.spacing.vertical)
 	-- end
 end

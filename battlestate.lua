@@ -33,7 +33,7 @@ battleState = {
 		table.insert(battleState.entities, background)
 
 		local m_menu = menu_rectangle(0,168, 320, 72)
-		local b_menubox = menu_rectangle(m_menu.w - 50, m_menu.y + 3, 45, 65)
+		b_menubox = menu_rectangle(m_menu.w - 50, m_menu.y + 3, 45, 65)
 
 		local enemies = get_enemies()
 
@@ -107,11 +107,12 @@ battleState = {
 
 	onKeyPress = function(key)
 		local next_menu = handleKeyPress(b_menu, key)
+		if next_menu.complete then 
+			next_menu =  battlemenu.init(party, lysh, get_enemies(), {b_menubox.x, b_menubox.y}, {3, 3}, {0, 12})
+		end
 		for i, v in ipairs(battleState.entities) do
 			if v == b_menu then
-				
-					table.remove(battleState.entities, i)
-				
+				table.remove(battleState.entities, i)
 			end
 		end
 		b_menu = next_menu
