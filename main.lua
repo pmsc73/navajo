@@ -15,6 +15,9 @@ require('overworld')
 require('battlestate')
 	-- for battleState
 
+require('mainmenu')
+	-- for menuState
+
 require('character')
 	-- for party members: karna, alnar, lysh, nez
 
@@ -22,7 +25,7 @@ require('character')
 TILE_SIZE = 32
 
 
-local current_state = battleState
+local current_state = menuState
 state_changed = true
 onNextUpdate = function() return nil end
 

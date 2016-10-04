@@ -53,8 +53,10 @@ function render(menu)
 	for i, item in ipairs(menu.selections) do 
 		local x = menu.pos.x + menu.padding.horizontal
 		local y = menu.pos.y + menu.padding.vertical + (i-1)*menu.spacing.vertical
-		gfx.print(item.name, x, y)
-
+		if item.name then
+			gfx.print(item.name, x, y)
+		else gfx.print(item, x, y)
+		end
 	end
 	-- if menu.previous then 
 		love.graphics.draw(res.arrow, menu.pos.x + 34, -1 + menu.pos.y + (menu.selected-1)*menu.spacing.vertical)
