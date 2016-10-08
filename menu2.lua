@@ -11,6 +11,10 @@ function new_menu(selections, pos, padding, spacing)
 		render(menu) 
 	end
 
+	menu.get_selected = function() 
+		return menu.selections[menu.selected]
+	end
+
 	return menu
 end
 
@@ -25,8 +29,8 @@ function handleKeyPress(menu, key)
 	end
 
 	if key == "return"  then 
-		if menu.selections[menu.selected].action then
-			menu.selections[menu.selected].action() 
+		if menu.get_selected().action then
+			menu.get_selected().action() 
 			r = menu
 			while (r.previous) do
 				r = r.previous
@@ -35,9 +39,9 @@ function handleKeyPress(menu, key)
 			return r
 		end
 		
-		if menu.selections[menu.selected].selections then
-			menu.selections[menu.selected].previous = menu
-			return menu.selections[menu.selected]
+		if menu.get_selected().selections then
+			menu.get_selected().previous = menu
+			return menu.get_selected()
 		end
 	end
 

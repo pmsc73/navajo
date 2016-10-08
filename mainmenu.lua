@@ -4,6 +4,7 @@ require 'character'
 require 'graphics'
 require 'battle'
 require 'menu2'
+require 'item'
 
 function new(cont, posX, posY, w, h) 
 	return 
@@ -70,12 +71,42 @@ menuMenu = function()
 	return menu
 end
 
+local itemMenu
+itemMenu = function(inventory)
+	local selections = {}
+	for item, quantity in pairs(inventory) do
+		selection = {}
+		selection.name = item .. "   *" .. quantity
+		selection.quantity = quantity
+		selection.description = ITEM_DATABASE[item]
+		table.insert(selections, selection)
+	end
+
+	local menu = new_menu(selections, {0,0}, {3,3}, {0,16})
+	local r = menu.render
+	menu.render = function() 
+		menu_rectangle(1,1,138,200).render()
+		gfx.print(menu.get_selected().description, 10, 170)
+		r()
+	end
+
+	menu.name = "Item"
+	return menu
+
+end
+
+
 menuContent = {}
 table.insert(menuContent, menuMenu())
+
 table.insert(menuContent, "Skills")
-table.insert(menuContent, "Items")
+
+table.insert(menuContent, itemMenu({["Potion"] = 9, ["Amulet of Fear"] = 1}))
+
 table.insert(menuContent, "Equipment")
+
 table.insert(menuContent, "Status")
+
 table.insert(menuContent, "Options")
 
 menuComp = new_menu(menuContent, {140, 1}, {3, 3}, {0, 12})
