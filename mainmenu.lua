@@ -52,9 +52,9 @@ end
 local menuMenu
 menuMenu = function()
 	local selections = {}
-	for _, sel in pairs({"KKKKKKKK", "AAAAAAAA", "LLLLLLLLL", "NNNNNNNN"}) do
+	for _, sel in pairs(partyContent) do
 		selection = {}
-		selection.name = sel
+		selection.name = sel.name
 		table.insert(selections, sel)
 
 	end
@@ -65,7 +65,7 @@ menuMenu = function()
 		menu_rectangle(1, 1, 138, 200)
 		r()
 	end
-	
+
 	menu.name = "Party"
 	return menu
 end
@@ -108,11 +108,11 @@ menuState = {
 			next_menu =  battlemenu.init(party, lysh, get_enemies(), {b_menubox.x, b_menubox.y}, {3, 3}, {0, 12})
 		end
 		for i, v in ipairs(menuState.entities) do
-			if v == b_menu then
+			if v == menuComp then
 				table.remove(menuState.entities, i)
 			end
 		end
-		b_menu = next_menu
+		menuComp = next_menu
 		table.insert(menuState.entities, menuComp)
 	end
 }
