@@ -6,6 +6,27 @@ require 'battle'
 require 'menu2'
 require 'item'
 
+
+function itemSubMenu(item)
+	local selections = {}
+	table.insert(selections, "USE")
+
+	equipOption = {}
+	equipOption.name = "EQUIP"
+	equipOption.action = function() 
+		if item == "Amulet of Fear" then
+			karna.equipped.accessory = item
+		end
+	end
+
+	table.insert(selections, equipOption)
+	table.insert(selections, "DISCARD")
+
+	local posx = 70
+	local posy = 25
+	return new_menu(selections, {posx, posy}, {3,3}, {0,12})
+end
+
 function new(cont, posX, posY, w, h) 
 	return 
 	{
@@ -18,16 +39,6 @@ function new(cont, posX, posY, w, h)
 			love.graphics.rectangle("fill", posX, posY, w, h)
 			love.graphics.setColor(255,255,255)
 			love.graphics.rectangle("line", posX, posY, w, h)
-			for i, sel in ipairs(cont) do
-				local str
-				if sel.name then 
-					str = sel.name
-				else 
-					str = sel
-				end
-				
-				gfx.print(str, posX, posY + 12*(i-1))
-			end
 		end,
 	}
 end
@@ -41,32 +52,29 @@ local menu = {}
 partyContent = {karna, alnar, lysh, nez}
 
 partyComp = new(partyContent, 1, 1, 138, 200)
-local _render = partyComp.render
-partyComp.render = function()
-	_render()
-	for i, char in ipairs(partyContent) do
-		gfx.print(char.name, partyComp.pos.x, partyComp.pos.y + 50 * (i-1))
-		love.graphics.draw(char.image, partyComp.pos.x,10 + partyComp.pos.y + 50 * (i-1))
-	end
-end
 
 local menuMenu
 menuMenu = function()
 	local selections = {}
 	for _, sel in pairs(partyContent) do
-		selection = {}
-		selection.name = sel.name
-		table.insert(selections, sel)
+		selection = new_menu({""}, {0,0}, {3,3}, {0,16})
+		selection.render = function() 
+			sel:render_status()
+		end
+		selection.name = ""
+		table.insert(selections, selection)
 
 	end
 
 	local menu = new_menu(selections, {0,0}, {3,3}, {0, 50})
 	local r = menu.render
 	menu.render = function() 
-		menu_rectangle(1, 1, 138, 200)
 		r()
+		for i, char in ipairs(partyContent) do
+			gfx.print(char.name, partyComp.pos.x, partyComp.pos.y + 50 * (i-1))
+			love.graphics.draw(char.image, partyComp.pos.x,10 + partyComp.pos.y + 50 * (i-1))
+		end
 	end
-
 	menu.name = "Party"
 	return menu
 end
@@ -75,7 +83,7 @@ local itemMenu
 itemMenu = function(inventory)
 	local selections = {}
 	for item, quantity in pairs(inventory) do
-		selection = {}
+		selection = itemSubMenu(item)
 		selection.name = item .. "   *" .. quantity
 		selection.quantity = quantity
 		selection.description = ITEM_DATABASE[item]
@@ -136,7 +144,7 @@ menuState = {
 	onKeyPress = function(key)
 		local next_menu = handleKeyPress(menuComp, key)
 		if next_menu.complete then 
-			next_menu =  battlemenu.init(party, lysh, get_enemies(), {b_menubox.x, b_menubox.y}, {3, 3}, {0, 12})
+			-- next_menu =  battlemenu.init(party, lysh, get_enemies(), {b_menubox.x, b_menubox.y}, {3, 3}, {0, 12})
 		end
 		for i, v in ipairs(menuState.entities) do
 			if v == menuComp then
