@@ -5,6 +5,7 @@ require 'battle'
 require 'character'
 require 'images'
 require 'state'
+require 'mainmenu'
 
 local tiles = love.graphics.newImage("res/tileset.png")
 
@@ -70,8 +71,12 @@ map_state = function(name, map_file, map_data)
 				hasMoved = false
 			end
 		end
+		
 		hasMoved = phys.handle_movement_input(karna, key, map_data, npc_entities)
 
+		if key == "p" then
+			changestate(menuState)
+		end
 	end
 	s.scale = function()
 		love.graphics.scale(1.25, 1.25)

@@ -25,7 +25,7 @@ require('character')
 TILE_SIZE = 32
 
 
-local current_state = menuState
+local current_state = kitala
 state_changed = true
 onNextUpdate = function() return nil end
 
@@ -54,7 +54,12 @@ function love.keypressed(key, scancode, isrepeat)
 end
 
 function changestate(state) 
-	onNextUpdate = function() current_state = state end
+	if not state then
+		onNextUpdate = function() current_state = previous_state end
+	else
+		previous_state = current_state
+		onNextUpdate = function() current_state = state end
+	end
 	state_changed = true
 end
 

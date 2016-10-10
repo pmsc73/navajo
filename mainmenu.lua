@@ -177,5 +177,8 @@ menuState = {
 		end
 		menuComp = next_menu
 		table.insert(menuState.entities, menuComp)
+		if key == "escape" then
+			changestate()
+		end
 	end
 }
