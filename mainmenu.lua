@@ -6,20 +6,32 @@ require 'battle'
 require 'menu2'
 require 'item'
 
-
 function itemSubMenu(item)
 	local selections = {}
-	table.insert(selections, "USE")
+
+	useOption = {}
+	useOption.name = "USE"
+
+	useOption.action = function()
+		if ITEM_DATABASE[item].onUse then 
+			ITEM_DATABASE[item].onUse(partyContent)
+		end
+	end
+
+	if ITEM_DATABASE[item].onUse then 
+		table.insert(selections, useOption)
+	end
 
 	equipOption = {}
 	equipOption.name = "EQUIP"
+	
 	equipOption.action = function() 
-		if item == "Amulet of Fear" then
+		if ITEM_DATABASE[item]["equip"]then 
 			karna.equipped.accessory = item
 		end
 	end
 
-	table.insert(selections, equipOption)
+	if ITEM_DATABASE[item]["equip"] then table.insert(selections, equipOption) end
 	table.insert(selections, "DISCARD")
 
 	local posx = 70
@@ -73,6 +85,18 @@ menuMenu = function()
 		for i, char in ipairs(partyContent) do
 			gfx.print(char.name, partyComp.pos.x, partyComp.pos.y + 50 * (i-1))
 			love.graphics.draw(char.image, partyComp.pos.x,10 + partyComp.pos.y + 50 * (i-1))
+			
+			local x = partyComp.pos.x + 45
+			local y = 10 + partyComp.pos.y + 50 * (i-1)
+			
+			gfx.print("\\", x-8, y+3)
+			gfx.drawStatusBar(x, y + 5, 4, 60, maxHpFormula(char), char.stats.currentHp, {255, 0, 0}, {0,0,0})
+			
+			gfx.print("~", x-8, y+13)
+			gfx.drawStatusBar(x, y + 15, 4, 60, maxMp(char), char.stats.currentMp, {32, 160, 255}, {0,0,0})
+			
+			gfx.print("|", x-8, y + 23)
+			gfx.drawStatusBar(x, y + 25, 4, 60, xpToLevel(char), char.stats.currentXp, {255, 255, 0}, {0,0,0})
 		end
 	end
 	menu.name = "Party"
@@ -86,7 +110,7 @@ itemMenu = function(inventory)
 		selection = itemSubMenu(item)
 		selection.name = item .. "   *" .. quantity
 		selection.quantity = quantity
-		selection.description = ITEM_DATABASE[item]
+		selection.description = ITEM_DATABASE[item].description
 		table.insert(selections, selection)
 	end
 
@@ -109,7 +133,7 @@ table.insert(menuContent, menuMenu())
 
 table.insert(menuContent, "Skills")
 
-table.insert(menuContent, itemMenu({["Potion"] = 9, ["Amulet of Fear"] = 1}))
+table.insert(menuContent, itemMenu({["Potion"] = 9, ["Amulet"] = 1, ["Bomb"] = 1}))
 
 table.insert(menuContent, "Equipment")
 
