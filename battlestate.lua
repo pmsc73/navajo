@@ -6,16 +6,16 @@ require 'images'
 require 'battle'
 require 'character'
 
+zombie = {name = "Zombie", image=res.enemy_zombie, pos={x=10, y=20}}
+zombie.stats = {agility = 2, constitution = 5, endurance = 1, wisdom = 3}
+
+ghoul = {name = "Ghoul", image=res.enemy_ghoul, pos={x=10, y=64}}
+ghoul.stats = {agility = 3, constitution = 3.5, endurance = 2, wisdom = 1}
+
+puddle = {name = "Puddle", image=res.enemy_puddle, pos={x=10, y=108}}
+puddle.stats = {agility = 1, constitution = 6, endurance = 1, wisdom = 1}
+
 function get_enemies() 
-	zombie = {name = "Zombie", image=res.enemy_zombie, pos={x=10, y=20}}
-	zombie.stats = {agility = 2, constitution = 5, endurance = 1, wisdom = 3}
-
-	ghoul = {name = "Ghoul", image=res.enemy_ghoul, pos={x=10, y=64}}
-	ghoul.stats = {agility = 3, constitution = 3.5, endurance = 2, wisdom = 1}
-
-	puddle = {name = "Puddle", image=res.enemy_puddle, pos={x=10, y=108}}
-	puddle.stats = {agility = 1, constitution = 6, endurance = 1, wisdom = 1}
-
 	return {zombie, ghoul, puddle}
 end
 
@@ -94,7 +94,7 @@ battleState = {
 		q = battleQueueInit(actors)
 		table.insert(battleState.entities, q)
 
-		table.insert(battleState.entities, battle_menu)
+		--table.insert(battleState.entities, battle_menu)
 	end, 
 
 	scale = function()

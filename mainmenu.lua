@@ -167,9 +167,9 @@ menuState = {
 
 	onKeyPress = function(key)
 		local next_menu = handleKeyPress(menuComp, key)
-		if next_menu.complete then 
-			-- next_menu =  battlemenu.init(party, lysh, get_enemies(), {b_menubox.x, b_menubox.y}, {3, 3}, {0, 12})
-		end
+
+		if next_menu.complete then end
+
 		for i, v in ipairs(menuState.entities) do
 			if v == menuComp then
 				table.remove(menuState.entities, i)

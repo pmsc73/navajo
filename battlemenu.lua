@@ -31,6 +31,7 @@ attackSubMenu = function(party, character, enemies)
 		enemy_selection = {}
 		enemy_selection.name = ""
 		enemy_selection.action = function() 
+			love.graphics.print("xxxxxxxxxxxxxxxxxxxxxx",0,0)
 			battleSystem.processAttack(character, enemy)
 		end
 		table.insert(selections, enemy_selection)
