@@ -31,7 +31,6 @@ attackSubMenu = function(party, character, enemies)
 		enemy_selection = {}
 		enemy_selection.name = ""
 		enemy_selection.action = function() 
-			love.graphics.print("xxxxxxxxxxxxxxxxxxxxxx",0,0)
 			battleSystem.processAttack(character, enemy)
 		end
 		table.insert(selections, enemy_selection)
@@ -53,7 +52,7 @@ skillSubMenu = function(party, character, enemies)
 		local targets = target_list[skill.targets]
 		local targets_selections = {}
 		for _, target in pairs(targets) do
-				table.insert(targets_selections, {name = "", action = function() skill.use(target) end})
+			table.insert(targets_selections, {name = "", action = function() skill.use(target) end})
 		end
 		skill_selection = new_menu(targets_selections, ATT_MENU_POS, ATT_MENU_PADDING, ATT_MENU_SPACING)
 		skill_selection.name = skill.name

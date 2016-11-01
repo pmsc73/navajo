@@ -22,7 +22,7 @@ function battleQueueInit(actors)
 			min_agility = actor.stats.agility
 		end
 	end
-
+	
 	for i, actor in ipairs(actors) do
 		LRU[i] = actor
 	end

@@ -8,15 +8,26 @@ require 'character'
 
 zombie = {name = "Zombie", image=res.enemy_zombie, pos={x=10, y=20}}
 zombie.stats = {agility = 2, constitution = 5, endurance = 1, wisdom = 3}
+zombie.xp = 10
 
 ghoul = {name = "Ghoul", image=res.enemy_ghoul, pos={x=10, y=64}}
 ghoul.stats = {agility = 3, constitution = 3.5, endurance = 2, wisdom = 1}
+ghoul.xp = 19
 
 puddle = {name = "Puddle", image=res.enemy_puddle, pos={x=10, y=108}}
 puddle.stats = {agility = 1, constitution = 6, endurance = 1, wisdom = 1}
+puddle.xp = 20
 
 function get_enemies() 
-	return {zombie, ghoul, puddle}
+	local e = {}
+
+	for _, n in pairs({zombie, ghoul, puddle}) do
+		if not n.dead then
+			table.insert(e, n)
+		end
+	end
+	
+	return e
 end
 
 battleState = {
@@ -35,7 +46,7 @@ battleState = {
 		local m_menu = menu_rectangle(0,168, 320, 72)
 		b_menubox = menu_rectangle(m_menu.w - 50, m_menu.y + 3, 45, 65)
 
-		local enemies = get_enemies()
+		enemies = get_enemies()
 
 		b_menu = battlemenu.init(party, karna, enemies, {b_menubox.x, b_menubox.y}, {3, 3}, {0, 12})
 
@@ -53,14 +64,14 @@ battleState = {
 
 				local health = maxHpFormula(char)
 				gfx.print("\\ " .. char.stats.currentHp .. " / " .. health, charline.x + 25, charline.y)
-				gfx.print("~ " .. char.stats.currentMp .. " / " .. maxMp(char), charline.x + 70, charline.y)
+				gfx.print("| " .. char.stats.currentXp, charline.x + 70, charline.y)
 				love.graphics.draw(char.image, char.pos.x, char.pos.y)
 			end
 
 			table.insert(battleState.entities, char)
 		end
 
-		for i, enemy in ipairs(enemies) do
+		for i, enemy in ipairs(get_enemies()) do
 			enemy.render = function() 
 				local charline = {x = m_menu.x + 7, y = m_menu.y + 5 + (16*(i-1))}
 
@@ -102,7 +113,19 @@ battleState = {
 	end,
 
 	onUpdate = function(dt) 
-		-- DO UPDATE STUFF
+		local available = false
+		for _, e in pairs(enemies) do
+			if e.dead then
+				for i, ent in ipairs(battleState.entities) do
+					if ent == e then
+						table.remove(battleState.entities, i)
+					end
+				end
+			else available = true end
+		end
+		if not available then 
+			changestate(menuState)
+		end
 	end,
 
 	onKeyPress = function(key)

@@ -36,6 +36,7 @@ function battleSystem.dealDamage(t, source, target, element)
 
 	if target.stats.currentHp <= 0 then
 		target.dead = true
+		processExperience(source, target)
 	end
 end
 
@@ -45,7 +46,26 @@ function battleSystem.heal(character, base_modifier)
 end
 
 function battleSystem.processAttack(character, target) 
-	target.stats.currentHp = target.stats.currentHp - character.stats.strength
+	battleSystem.dealDamage(PHYSICAL, character, target)
+end
+
+function processExperience(source, target)
+	local xp_start = source.stats.currentXp
+	local lv_start = source.level
+
+	local xp_post = source.stats.currentXp + target.xp
+
+	while true do
+		
+		-- LEVEL UP --
+		if xp_post > xpForLevel(source, lv_start) then
+			xp_post = xp_post - xpForLevel(source, lv_start)
+			source:levelUp()
+		else
+			break
+		end
+	end
+	source.stats.currentXp = xp_post
 end
 
 function maxHpFormula(character) 

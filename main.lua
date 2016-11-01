@@ -80,6 +80,7 @@ function love.draw()
 	if current_state.scale then current_state.scale() end
 
 	for depth, entity in ipairs(current_state.entities) do
+		
 		if entity.render ~= nil then
 			entity.render()
 		elseif entity.image ~= nil then

@@ -83,6 +83,9 @@ menuMenu = function()
 	menu.render = function() 
 		r()
 		for i, char in ipairs(partyContent) do
+			love.graphics.setColor(char.color)
+			love.graphics.circle("line", partyComp.pos.x + 50, 8 + partyComp.pos.y + 50 * (i-1), 6)
+
 			gfx.print(char.name, partyComp.pos.x, partyComp.pos.y + 50 * (i-1))
 			love.graphics.draw(char.image, partyComp.pos.x,10 + partyComp.pos.y + 50 * (i-1))
 			
@@ -100,6 +103,68 @@ menuMenu = function()
 		end
 	end
 	menu.name = "Party"
+	return menu
+end
+
+local skillsMenu
+skillsMenu = function()
+	local selections = {}
+	for _, sel in pairs(partyContent) do
+		selection = new_menu({""}, {0,0}, {3,3}, {0,16})
+		selection.render = function() 
+			sel:render_skills()
+			gfx.print("!!!!!!!!", 10,10)
+		end	
+		local SKILLS = {}
+		for _, SKILL in pairs(sel.skillTree) do
+			local s = {
+				name = SKILL.name .. "   " .. "? " .. SKILL.cost, 
+				action = function()
+					SKILL.onacquire()
+					sel.stats.currentAp = sel.stats.currentAp - SKILL.cost
+				end
+			}
+			table.insert(SKILLS, s)
+		end
+			
+		selection = new_menu(SKILLS, {0,0}, {3,3}, {0,15})
+		selection.name = ""
+		table.insert(selections, selection)
+	end
+
+	local menu = new_menu(selections, {0,0}, {3,3}, {0, 50})
+	local r = menu.render
+	menu.render = function()
+		r()
+		for i, char in ipairs(partyContent) do
+
+			for j, col in ipairs(char.colors) do
+				gfx.print(string.format("%d",col[1]) .. string.format(" %d",col[2]) .. string.format(" %d",col[3]),
+				 partyComp.pos.x + 60, 5 + partyComp.pos.y + 12 * (j-1) + 50*(i-1)
+				)
+
+				love.graphics.setColor(col)
+				love.graphics.circle("line", partyComp.pos.x + 50, 8 + partyComp.pos.y + 12 * (j-1) + 50*(i-1), 6)
+			end
+			
+
+			gfx.print(char.name, partyComp.pos.x,partyComp.pos.y + 50 * (i-1))
+			love.graphics.draw(char.image, partyComp.pos.x,10 + partyComp.pos.y + 50 * (i-1))
+			
+			local x = partyComp.pos.x + 45
+			local y = 10 + partyComp.pos.y + 50 * (i-1)
+			
+			-- gfx.print("\\", x-8, y+3)
+			-- gfx.drawStatusBar(x, y + 5, 4, 60, maxHpFormula(char), char.stats.currentHp, {255, 0, 0}, {0,0,0})
+			
+			-- gfx.print("~", x-8, y+13)
+			-- gfx.drawStatusBar(x, y + 15, 4, 60, maxMp(char), char.stats.currentMp, {32, 160, 255}, {0,0,0})
+			
+			gfx.print("|", x-8, y + 23)
+			gfx.drawStatusBar(x, y + 25, 4, 60, xpToLevel(char), char.stats.currentXp, {255, 255, 0}, {0,0,0})
+		end
+	end
+	menu.name = "Skills"
 	return menu
 end
 
@@ -131,7 +196,7 @@ end
 menuContent = {}
 table.insert(menuContent, menuMenu())
 
-table.insert(menuContent, "Skills")
+table.insert(menuContent, skillsMenu())
 
 table.insert(menuContent, itemMenu({["Potion"] = 9, ["Amulet"] = 1, ["Bomb"] = 1}))
 

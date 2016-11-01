@@ -62,7 +62,7 @@ function phys.handle_movement_input(actor, key, map, npcs)
 		-- else -- 
 		actor.pos.x = newPos.x
 		actor.pos.y = newPos.y
-		if math.random() > 0.99 then
+		if math.random() > 0.5 then
 			changestate(battleState)
 		end
 		return true
