@@ -17,7 +17,7 @@ function character.new(name, image, ax, ay)
 	return o
 end
 
-karna = character.new("Karna", res.karna, 340,  32)
+karna = character.new("Karna", res.karna, 6,  6)
 karna.skills = {skill.berserk, skill.defend}
 karna.stats = 
 {
@@ -43,7 +43,6 @@ karna.skillTree = {
 			karna.stats.strength = karna.stats.strength + 1
 		end
 	}
-
 }
 
 alnar = character.new("Alnar", res.alnar, 340, 74)

@@ -40,10 +40,6 @@ map_state = function(name, map_file, map_data)
 	
 	s.init = function(party)
 
-		karna.pos.x = 6
-		karna.pos.y = 6
-
-
 		for _, drawable in pairs(getDrawable(karna, map_data, tiles)) do
 			table.insert(s.tiles, drawable)
 		end
