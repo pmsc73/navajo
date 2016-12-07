@@ -51,9 +51,9 @@ skillSubMenu = function(party, character, enemies)
 	for _, skill in pairs(character.skills) do
 		local targets = target_list[skill.targets]
 		local targets_selections = {}
-		for _, target in pairs(targets) do
+		if targets then for _, target in pairs(targets) do
 			table.insert(targets_selections, {name = "", action = function() skill.use(target) end})
-		end
+		end end
 		skill_selection = new_menu(targets_selections, ATT_MENU_POS, ATT_MENU_PADDING, ATT_MENU_SPACING)
 		skill_selection.name = skill.name
 

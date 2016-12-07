@@ -6,40 +6,25 @@ require 'images'
 require 'battle'
 require 'character'
 
-function ec_zombie()
-	local zombie = {name = "Zombie", image=res.enemy_zombie, pos={x=10, y=20}}
-	zombie.stats = {agility = 2, constitution = 5, endurance = 1, wisdom = 3}
-	zombie.xp = 10
-	return zombie
-end
-
-function ec_ghoul()
-	local ghoul = {name = "Ghoul", image=res.enemy_ghoul, pos={x=10, y=64}}
-	ghoul.stats = {agility = 3, constitution = 3.5, endurance = 2, wisdom = 1}
-	ghoul.xp = 19
-	return ghoul
-end
-
-function ec_puddle()
-	local puddle = {name = "Puddle", image=res.enemy_puddle, pos={x=10, y=108}}
-	puddle.stats = {agility = 1, constitution = 6, endurance = 1, wisdom = 1}
-	puddle.xp = 20
-	return puddle
-end
+require 'enemy'
+	-- for DB_ENEMY
 
 local enemies_table = {}
 
 function init_enemies()
 	enemies_table = {}
-	for _, e in pairs({ec_zombie(), ec_ghoul(), ec_puddle()}) do
-		local instance = e
-		table.insert(enemies_table, instance)
+	while #enemies_table < 3 do
+		for _, e in pairs(DB_ENEMY) do
+			if math.random() > 0.4 and #enemies_table <= 3 then
+				table.insert(enemies_table, enemy_copy(e))
+			end
+		end
 	end
 end
 function get_enemies() 
 	local e = {}
 
-	for _, n in pairs(enemies_table) do
+	for i, n in ipairs(enemies_table) do
 		if not n.dead then
 			table.insert(e, n)
 		end
@@ -65,9 +50,7 @@ battleState = {
 		local m_menu = menu_rectangle(0,168, 320, 72)
 		b_menubox = menu_rectangle(m_menu.w - 50, m_menu.y + 3, 45, 65)
 
-		enemies = get_enemies()
-
-		b_menu = battlemenu.init(party, karna, enemies, {b_menubox.x, b_menubox.y}, {3, 3}, {0, 12})
+		b_menu = battlemenu.init(party, karna, get_enemies(), {b_menubox.x, b_menubox.y}, {3, 3}, {0, 12})
 
 		table.insert(battleState.entities, m_menu)
 		table.insert(battleState.entities, b_menubox)
@@ -101,7 +84,7 @@ battleState = {
 				end
 				gfx.drawStatusBar(charline.x + 35, charline.y, 7, 60, maxHpFormula(enemy), enemy.stats.currentHp, {255,0,0}, {255, 255, 255})
 
-				love.graphics.draw(enemy.image, enemy.pos.x, enemy.pos.y)
+				love.graphics.draw(enemy.tileset, enemy.quad, 10, 10 + (32*(i-1)))
 			end
 
 
@@ -117,12 +100,20 @@ battleState = {
 			table.insert(actors, char)
 		end
 
-		for _, enemy in pairs(enemies) do
+		for _, enemy in pairs(get_enemies()) do
 			enemy.controllable = false
 			table.insert(actors, enemy)
 		end
 
 		q = battleQueueInit(actors)
+		local n = 0
+		q.next = function() 
+			if n >= #q.actors then
+				n = 0
+			end
+			n = n+1
+			return q.actors[n]
+		end
 		table.insert(battleState.entities, q)
 
 		--table.insert(battleState.entities, battle_menu)
@@ -134,7 +125,7 @@ battleState = {
 
 	onUpdate = function(dt) 
 		local available = false
-		for _, e in pairs(enemies) do
+		for _, e in pairs(get_enemies()) do
 			if e.dead then
 				for i, ent in ipairs(battleState.entities) do
 					if ent == e then
@@ -151,7 +142,7 @@ battleState = {
 	onKeyPress = function(key)
 		local next_menu = handleKeyPress(b_menu, key)
 		if next_menu.complete then 
-			next_menu =  battlemenu.init(party, lysh, get_enemies(), {b_menubox.x, b_menubox.y}, {3, 3}, {0, 12})
+			next_menu =  battlemenu.init(party, q.next(), get_enemies(), {b_menubox.x, b_menubox.y}, {3, 3}, {0, 12})
 		end
 		for i, v in ipairs(battleState.entities) do
 			if v == b_menu then
