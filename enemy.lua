@@ -1,4 +1,5 @@
 -- enemy database file
+require 'skill'
 
 local tiles = love.graphics.newImage("res/enemy-tiles.png")
 
@@ -30,6 +31,7 @@ function new(name, image, POW, MAG, SPD, xp)
 		dexterity = SPD[2],
 		luck = SPD[3]
 	}
+	e.skills = {skill.nature}
 	e.xp = xp
 	return e
 end

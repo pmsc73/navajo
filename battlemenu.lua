@@ -48,7 +48,7 @@ skillSubMenu = function(party, character, enemies)
 
 	local selections = {}
 
-	for _, skill in pairs(character.skills) do
+	if character.skills then for _, skill in pairs(character.skills) do
 		local targets = target_list[skill.targets]
 		local targets_selections = {}
 		if targets then for _, target in pairs(targets) do
@@ -58,7 +58,7 @@ skillSubMenu = function(party, character, enemies)
 		skill_selection.name = skill.name
 
 		table.insert(selections, skill_selection)
-	end
+	end end
 	
 	local menu = new_menu(selections, SKL_MENU_POS, SKL_MENU_PADDING, SKL_MENU_SPACING)
 	local r = menu.render

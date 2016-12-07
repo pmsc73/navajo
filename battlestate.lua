@@ -112,6 +112,9 @@ battleState = {
 				n = 0
 			end
 			n = n+1
+			if not q.actors[n].controllable then
+				return q.next()
+			end
 			return q.actors[n]
 		end
 		table.insert(battleState.entities, q)
@@ -142,7 +145,8 @@ battleState = {
 	onKeyPress = function(key)
 		local next_menu = handleKeyPress(b_menu, key)
 		if next_menu.complete then 
-			next_menu =  battlemenu.init(party, q.next(), get_enemies(), {b_menubox.x, b_menubox.y}, {3, 3}, {0, 12})
+			next_actor = q.next()
+			next_menu =  battlemenu.init(party, next_actor, get_enemies(), {b_menubox.x, b_menubox.y}, {3, 3}, {0, 12})
 		end
 		for i, v in ipairs(battleState.entities) do
 			if v == b_menu then
