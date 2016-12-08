@@ -33,6 +33,12 @@ function get_enemies()
 	return e
 end
 
+function enemy_turn(enemy, party)
+	local target = party[math.floor(math.random(#party))]
+	battleSystem.processAttack(enemy, target)
+end
+
+
 battleState = {
 	name = "BATTLE",
 
@@ -113,6 +119,7 @@ battleState = {
 			end
 			n = n+1
 			if not q.actors[n].controllable then
+				enemy_turn(q.actors[n], party)
 				return q.next()
 			end
 			return q.actors[n]

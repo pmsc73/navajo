@@ -83,20 +83,23 @@ menuMenu = function()
 	menu.render = function() 
 		r()
 		for i, char in ipairs(partyContent) do
-			love.graphics.setColor(char.color)
-			love.graphics.circle("line", partyComp.pos.x + 50, 8 + partyComp.pos.y + 50 * (i-1), 6)
-
+			for n, col in ipairs(char.colors) do
+				local img = love.graphics.newImage("res/img/colorwheel.png")
+				love.graphics.draw(img, partyComp.pos.x + 40, 3 + partyComp.pos.y + 50 * (i-1))
+				love.graphics.setColor(col)
+				love.graphics.circle("line", partyComp.pos.x + 66 + (14*(n-1)), 10 + partyComp.pos.y + 50 * (i-1), 6)
+			end
 			gfx.print(char.name, partyComp.pos.x, partyComp.pos.y + 50 * (i-1))
 			love.graphics.draw(char.image, partyComp.pos.x,10 + partyComp.pos.y + 50 * (i-1))
 			
 			local x = partyComp.pos.x + 45
 			local y = 10 + partyComp.pos.y + 50 * (i-1)
 			
-			gfx.print("\\", x-8, y+3)
-			gfx.drawStatusBar(x, y + 5, 4, 60, maxHpFormula(char), char.stats.currentHp, {255, 0, 0}, {0,0,0})
+			gfx.print("\\", x-8, y+7)
+			gfx.drawStatusBar(x, y + 9, 4, 60, maxHpFormula(char), char.stats.currentHp, {255, 0, 0}, {0,0,0})
 			
-			gfx.print("~", x-8, y+13)
-			gfx.drawStatusBar(x, y + 15, 4, 60, maxMp(char), char.stats.currentMp, {32, 160, 255}, {0,0,0})
+			gfx.print("~", x-8, y+15)
+			gfx.drawStatusBar(x, y + 17, 4, 60, maxMp(char), char.stats.currentMp, {32, 160, 255}, {0,0,0})
 			
 			gfx.print("|", x-8, y + 23)
 			gfx.drawStatusBar(x, y + 25, 4, 60, xpToLevel(char), char.stats.currentXp, {255, 255, 0}, {0,0,0})
