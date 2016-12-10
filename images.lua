@@ -25,6 +25,9 @@ pres = {
 	enemy_puddle= love.graphics.newImage("res/img/puddle.png"),
 
 	-- MISC, MENU STUFF
+
+	c_wheel 	= love.graphics.newImage("res/img/colorwheel.png"),
+
 	arrow		= love.graphics.newImage("res/img/arrow.png"),
 	background  = love.graphics.newImage("res/img/bg.png"),
 

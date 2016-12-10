@@ -5,6 +5,9 @@ require 'graphics'
 require 'battle'
 require 'menu2'
 require 'item'
+require 'images'
+require 'state'
+
 
 function itemSubMenu(item)
 	local selections = {}
@@ -83,9 +86,9 @@ menuMenu = function()
 	menu.render = function() 
 		r()
 		for i, char in ipairs(partyContent) do
+			love.graphics.draw(res.c_wheel, partyComp.pos.x + 40, 3 + partyComp.pos.y + 50 * (i-1))
+			gfx.print(#char.colors, partyComp.pos.x + 46, 6 + partyComp.pos.y + 50 *(i-1))
 			for n, col in ipairs(char.colors) do
-				local img = love.graphics.newImage("res/img/colorwheel.png")
-				love.graphics.draw(img, partyComp.pos.x + 40, 3 + partyComp.pos.y + 50 * (i-1))
 				love.graphics.setColor(col)
 				love.graphics.circle("line", partyComp.pos.x + 66 + (14*(n-1)), 10 + partyComp.pos.y + 50 * (i-1), 6)
 			end
@@ -195,6 +198,53 @@ itemMenu = function(inventory)
 
 end
 
+local colorsMenu
+colorsMenu = function()
+	local menu = new_menu({}, {0, 0}, {3,3}, {0,16})
+	local r = menu.render
+	
+
+	
+	-- make some random colors
+	local colors = {}
+	math.randomseed(os.time())
+	
+	for i=1,1 do
+		local theta = 360
+		local r = 100
+		local h = 100
+
+		table.insert(colors, {theta, r, h})
+		table.insert(colors, {theta + 30, r, h})
+		table.insert(colors, {theta + 60, r, h})
+		table.insert(colors, {theta + 90, r, h})
+		table.insert(colors, {theta + 120, r, h})
+		table.insert(colors, {theta + 150, r, h})
+		table.insert(colors, {theta + 180, r, h})
+		table.insert(colors, {theta + 210, r, h})
+		table.insert(colors, {theta + 240, r, h})
+		table.insert(colors, {theta + 270, r, h})
+		table.insert(colors, {theta + 300, r, h})
+		table.insert(colors, {theta + 330, r, h})
+		table.insert(colors, {theta + 360, r, h})
+		table.insert(colors, {0, 0, 50})
+	end
+	menu.render = function() 
+
+		love.graphics.setColor(0,0,0)
+		love.graphics.rectangle("fill", 0,0, 1000, 1000)
+
+		gfx.print("Color Menu", 3, 3, {255,255,255})
+		for i, color in ipairs(colors) do
+			for j, c2 in ipairs(colors) do
+					gfx.print(string.format("%+1.2f", diff(color, c2)), -15 + 22*j, 13*i, HSV(c2[1], c2[2], c2[3]))
+			end
+		end
+	end
+
+	menu.name = "Colors"
+	return menu
+end
 
 menuContent = {}
 table.insert(menuContent, menuMenu())
@@ -203,7 +253,7 @@ table.insert(menuContent, skillsMenu())
 
 table.insert(menuContent, itemMenu({["Potion"] = 9, ["Amulet"] = 1, ["Bomb"] = 1}))
 
-table.insert(menuContent, "Equipment")
+table.insert(menuContent, colorsMenu())
 
 table.insert(menuContent, "Status")
 
@@ -228,12 +278,17 @@ menuState = {
  		table.insert(menuState.entities, mapComp)
  		table.insert(menuState.entities, descComp)
  	end,
-	onUpdate = function(dt) return nil end,
+	onUpdate = function(dt) 
+
+		return nil 
+
+	end,
 	scale = function() 
 		love.graphics.scale(2.0, 2.0)
 	end,
 
 	onKeyPress = function(key)
+
 		local next_menu = handleKeyPress(menuComp, key)
 
 		if next_menu.complete then end
