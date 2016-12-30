@@ -1,6 +1,6 @@
 -- menu object
 
-function new_menu(selections, pos, padding, spacing)
+function new_menu(selections, pos, padding, spacing, a_offset)
 	local menu = {}
 	menu.selections = selections
 	menu.selected = 1
@@ -13,6 +13,12 @@ function new_menu(selections, pos, padding, spacing)
 
 	menu.get_selected = function() 
 		return menu.selections[menu.selected]
+	end
+
+	if a_offset == nil then
+		menu.arrow_offset = 34
+	else
+		menu.arrow_offset = a_offset
 	end
 
 	return menu
@@ -48,7 +54,12 @@ function handleKeyPress(menu, key)
 	if key == "backspace" and menu.previous then
 		return menu.previous
 	end
-
+	
+	if menu.selected.scrolls then
+		if key == "left" or key == "right" then
+			menu.selected.handleSideScroll(key)
+		end
+	end
 	return menu
 end
 
@@ -57,12 +68,15 @@ function render(menu)
 	for i, item in ipairs(menu.selections) do 
 		local x = menu.pos.x + menu.padding.horizontal
 		local y = menu.pos.y + menu.padding.vertical + (i-1)*menu.spacing.vertical
-		if item.name then
+		if item.render then
+			item.render()
+		elseif item.name then
 			gfx.print(item.name, x, y)
 		else gfx.print(item, x, y)
+
 		end
 	end
 	-- if menu.previous then 
-		love.graphics.draw(res.arrow, menu.pos.x + 34, -1 + menu.pos.y + (menu.selected-1)*menu.spacing.vertical)
+		love.graphics.draw(res.arrow, menu.pos.x + menu.arrow_offset, -1 + menu.pos.y + (menu.selected-1)*menu.spacing.vertical)
 	-- end
 end

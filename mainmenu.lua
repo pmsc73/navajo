@@ -12,9 +12,8 @@ require 'state'
 function itemSubMenu(item)
 	local selections = {}
 
-	useOption = {}
+	local useOption = {}
 	useOption.name = "USE"
-
 	useOption.action = function()
 		if ITEM_DATABASE[item].onUse then 
 			ITEM_DATABASE[item].onUse(partyContent)
@@ -25,16 +24,45 @@ function itemSubMenu(item)
 		table.insert(selections, useOption)
 	end
 
-	equipOption = {}
+	local equipOption = {}
 	equipOption.name = "EQUIP"
-	
 	equipOption.action = function() 
 		if ITEM_DATABASE[item]["equip"]then 
 			karna.equipped.accessory = item
 		end
 	end
 
+	local cus_selections = {}
+	for i, color in ipairs({{255,0,0}, {0,255,0}, {0,0,255}}) do
+		local selection = {}
+		selection.name = i
+		selection.scrolls = true
+		local bar = {
+			pos = { x = 4, y = 12*(i-1) + 4},
+			dim = { w = 100, h = 5 },
+			val = 5
+		}
+		selection.render = function() 
+			gfx.drawStatusBar(bar.pos.x, bar.pos.y,
+								bar.dim.h, bar.dim.w, 
+								10, bar.val, color, {0,0,0})
+		end
+		selection.handeSideScroll = function(key)
+			if key == "left" then bar.val = bar.val - 1 end
+			if key == "right" then bar.val = bar.val + 1 end
+		end
+
+
+		table.insert(cus_selections, selection)
+	end
+
+	local customOption = new_menu(cus_selections, {4,4}, {3,3}, {0,12})
+	customOption.name = "CUSTOMIZE"
+
+
 	if ITEM_DATABASE[item]["equip"] then table.insert(selections, equipOption) end
+	if ITEM_DATABASE[item].customMenu then table.insert(selections, customOption) end
+	
 	table.insert(selections, "DISCARD")
 
 	local posx = 70
@@ -246,16 +274,39 @@ colorsMenu = function()
 	return menu
 end
 
+local storeMenu
+storeMenu = function()
+	local name
+	name = function(title, cost)
+		return string.format("%-24s%6s", title, ""..cost)
+	end
+	local selections = {
+		name("Sword <",   10),
+		name("Sword >",   10),
+		name("Sword ;",   10),
+		name("Sword <>",  16),
+		name("Sword <;",  16),
+		name("Sword >;",  16),
+		name("Sword <>;", 21)
+	}
+	
+	local menu = new_menu(selections, {0, 0}, {3,3}, {0,16}, 128)
+
+
+	menu.name = "Store"
+	return menu
+end
+
 menuContent = {}
 table.insert(menuContent, menuMenu())
 
 table.insert(menuContent, skillsMenu())
 
-table.insert(menuContent, itemMenu({["Potion"] = 9, ["Amulet"] = 1, ["Bomb"] = 1}))
+table.insert(menuContent, itemMenu({["Sword"] = 1, ["Potion"] = 9, ["Amulet"] = 1, ["Bomb"] = 1}))
 
 table.insert(menuContent, colorsMenu())
 
-table.insert(menuContent, "Status")
+table.insert(menuContent, storeMenu())
 
 table.insert(menuContent, "Options")
 

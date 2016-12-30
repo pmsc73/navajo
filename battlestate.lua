@@ -34,7 +34,7 @@ function get_enemies()
 end
 
 function enemy_turn(enemy, party)
-	local target = party[1]
+	local target = party[math.ceil(math.random() * 4)]
 	battleSystem.processAttack(enemy, target)
 end
 
