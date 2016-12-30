@@ -35,14 +35,14 @@ function itemSubMenu(item)
 	local cus_selections = {}
 	for i, color in ipairs({{255,0,0}, {0,255,0}, {0,0,255}}) do
 		local selection = {}
-		selection.name = i
+		selection.name = i .. ": "
 		selection.scrolls = true
 		local bar = {
 			pos = { x = 4, y = 12*(i-1) + 4},
 			dim = { w = 100, h = 5 },
 			val = 5
 		}
-		selection.render = function() 
+		selection.s_render = function() 
 			gfx.drawStatusBar(bar.pos.x, bar.pos.y,
 								bar.dim.h, bar.dim.w, 
 								10, bar.val, color, {0,0,0})
@@ -339,7 +339,6 @@ menuState = {
 	end,
 
 	onKeyPress = function(key)
-
 		local next_menu = handleKeyPress(menuComp, key)
 
 		if next_menu.complete then end

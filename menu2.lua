@@ -54,10 +54,10 @@ function handleKeyPress(menu, key)
 	if key == "backspace" and menu.previous then
 		return menu.previous
 	end
-	
-	if menu.selected.scrolls then
+
+	if menu.get_selected().scrolls then
 		if key == "left" or key == "right" then
-			menu.selected.handleSideScroll(key)
+			menu.get_selected().handleSideScroll(key)
 		end
 	end
 	return menu
@@ -68,9 +68,10 @@ function render(menu)
 	for i, item in ipairs(menu.selections) do 
 		local x = menu.pos.x + menu.padding.horizontal
 		local y = menu.pos.y + menu.padding.vertical + (i-1)*menu.spacing.vertical
-		if item.render then
-			item.render()
-		elseif item.name then
+		if item.s_render then
+			item.s_render()
+		end 
+		if item.name then
 			gfx.print(item.name, x, y)
 		else gfx.print(item, x, y)
 
