@@ -36,6 +36,7 @@ function battleSystem.dealDamage(t, source, target, element)
 
 	if target.stats.currentHp <= 0 then
 		target.dead = true
+		target.stats.currentHp = 0
 		processExperience(source, target)
 	end
 end
@@ -50,6 +51,7 @@ function battleSystem.processAttack(character, target)
 end
 
 function processExperience(source, target)
+	if not source.stats.currentXp then return end
 	local xp_start = source.stats.currentXp
 	local lv_start = source.level
 

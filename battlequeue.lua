@@ -61,13 +61,5 @@ function battleQueueInit(actors)
 	for _, actor in pairs(queue) do
 		table.insert(q.actors, actor)
 	end
-	q.render = function() 
-		
-		gfx.print('Battle Queue |' .. #q.actors .. '| \\' .. maxTurns, 100, 5)
-		for i, value in ipairs(q.actors) do
-			gfx.print(value.name, 100, 10 + 12*(i))
-		end
-	end
-
 	return q
 end

@@ -63,8 +63,13 @@ function handleKeyPress(menu, key)
 	return menu
 end
 
-
-function render(menu) 
+function render(menu, current)
+	if current == nil then
+		current = true
+	end
+	if menu.previous and menu.previous.persists then
+		render(menu.previous, false)
+	end
 	for i, item in ipairs(menu.selections) do 
 		local x = menu.pos.x + menu.padding.horizontal
 		local y = menu.pos.y + menu.padding.vertical + (i-1)*menu.spacing.vertical
@@ -77,7 +82,7 @@ function render(menu)
 
 		end
 	end
-	-- if menu.previous then 
+	if current == true then 
 		love.graphics.draw(res.arrow, menu.pos.x + menu.arrow_offset, -1 + menu.pos.y + (menu.selected-1)*menu.spacing.vertical)
-	-- end
+	end
 end

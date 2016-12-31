@@ -125,6 +125,7 @@ function battlemenu.init(party, character, enemies, pos, padding, spacing)
 	table.insert(selections, itemSubMenu())
 	table.insert(selections, escapeSubMenu())
 
-	battle_menu_instance = new_menu(selections, pos, padding, spacing)
+	local battle_menu_instance = new_menu(selections, pos, padding, spacing)
+	battle_menu_instance.persists = true
 	return battle_menu_instance
 end

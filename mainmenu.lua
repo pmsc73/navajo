@@ -47,7 +47,7 @@ function itemSubMenu(item)
 								bar.dim.h, bar.dim.w, 
 								10, bar.val, color, {0,0,0})
 		end
-		selection.handeSideScroll = function(key)
+		selection.handleSideScroll = function(key)
 			if key == "left" then bar.val = bar.val - 1 end
 			if key == "right" then bar.val = bar.val + 1 end
 		end
@@ -214,6 +214,7 @@ itemMenu = function(inventory)
 	end
 
 	local menu = new_menu(selections, {0,0}, {3,3}, {0,16})
+	menu.persists = true
 	local r = menu.render
 	menu.render = function() 
 		menu_rectangle(1,1,138,200).render()

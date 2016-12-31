@@ -26,7 +26,7 @@ TILE_SIZE = 32
 
 
 local current_state = kitala
-state_changed = true
+local state_changed = true
 onNextUpdate = function() return nil end
 
 local party = {karna, alnar, lysh, nez}
