@@ -3,6 +3,9 @@ require 'skill'
 
 local tiles = love.graphics.newImage("res/enemy-tiles.png")
 
+local enemy_stats_modifier = 0
+local enemy_stats_multiplier = 1
+
 local WIDTH = 33
 local HEIGHT = 42
 
@@ -40,10 +43,19 @@ DB_ENEMY =
 {
 	new("Zombie", 	{2,0}, {10, 1, 5},   {1, 3, 1}, {2, 1, 1}, 10),
 	new("Ghoul", 	{2,1}, {10, 2, 3.5}, {1, 1, 1}, {3, 1, 1}, 19),
+	
 	new("Puddle", 	{1,0}, {10, 1, 6},   {1, 1, 1}, {1, 1, 1}, 20),
 	new("Swamp", 	{1,1}, {10, 3, 7},   {1, 1, 1}, {1, 1, 1}, 30),
-	new("Lava", 	{1,2}, {10, 5, 9},   {1, 1, 1}, {1, 1, 1}, 50)
+	new("Lava", 	{1,2}, {10, 5, 9},   {1, 1, 1}, {1, 1, 1}, 50),
+	
+	new("Thug",		{0,0}, {1,1,1}, {1,1,1}, {1,1,1}, 1),
+	new("Pirate",	{0,1}, {2,2,2}, {2,2,2}, {2,2,2}, 2),
+	new("Rebel", 	{0,2}, {6,6,6}, {6,6,6}, {6,6,6}, 666666)
 }
+function update_modifiers()
+	enemy_stats_modifier = enemy_stats_modifier + 1
+	enemy_stats_mulitplier = enemy_stats_multiplier * (1.01)
+end
 
 function enemy_copy(enemy)
 	local copy = {}
@@ -52,7 +64,8 @@ function enemy_copy(enemy)
 	copy.quad = enemy.quad
 	copy.stats = {}
 	for k, v in pairs(enemy.stats) do
-		copy.stats[k] = v
+
+		copy.stats[k] = math.floor((v + enemy_stats_modifier) * (enemy_stats_multiplier))
 	end
 	copy.xp = enemy.xp
 	return copy

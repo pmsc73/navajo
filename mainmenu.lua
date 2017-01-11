@@ -279,7 +279,7 @@ local storeMenu
 storeMenu = function()
 	local name
 	name = function(title, cost)
-		return string.format("%-24s%6s", title, ""..cost)
+		return string.format("%-24s%6s", title, "?"..cost)
 	end
 	local selections = {
 		name("Sword <",   10),

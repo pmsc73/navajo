@@ -145,6 +145,7 @@ battleState = {
 			else available = true end
 		end
 		if not available then 
+			update_modifiers()
 			changestate()
 		end
 	end,

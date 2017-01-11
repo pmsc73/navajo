@@ -20,7 +20,7 @@ function new_menu(selections, pos, padding, spacing, a_offset)
 	else
 		menu.arrow_offset = a_offset
 	end
-
+	menu.persists = true
 	return menu
 end
 
