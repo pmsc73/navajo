@@ -53,21 +53,14 @@ end
 function processExperience(source, target)
 	if not source.stats.currentXp then return end
 	local xp_start = source.stats.currentXp
-	local lv_start = source.level
 
+	local lv_start = source.level
 	local xp_post = source.stats.currentXp + target.xp
 
-	while true do
-		
-		-- LEVEL UP --
-		if xp_post > xpForLevel(source, lv_start) then
-			xp_post = xp_post - xpForLevel(source, lv_start)
-			source:levelUp()
-		else
-			break
-		end
+	while  xp_post >= xpToLevel(source)  do
+		source:levelUp()
 	end
-	source.stats.currentXp = xp_post
+	source.stats.currentXp = source.stats.currentXp + target.xp
 end
 
 function maxHpFormula(character) 

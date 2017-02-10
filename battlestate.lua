@@ -13,10 +13,11 @@ local enemies_table = {}
 
 function init_enemies()
 	enemies_table = {}
-	while #enemies_table < 3 do
+	while #enemies_table < math.floor(math.random() * 5) do
 		for _, e in pairs(DB_ENEMY) do
-			if math.random() > 0.4 and #enemies_table <= 3 then
+			if math.random() < 0.025 then
 				table.insert(enemies_table, enemy_copy(e))
+				break
 			end
 		end
 	end

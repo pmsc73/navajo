@@ -73,13 +73,19 @@ skillSubMenu = function(party, character, enemies)
 end
 
 local magicSubMenu
-magicSubMenu = function()
-	local spells = {
-		{name = "Fire <"},
-		{name = "Thunder >"},
-		{name = "Nature ;"}, 
-		{name = "Water \""}
-	}
+magicSubMenu = function(character, enemies)
+	local spells = {}
+	for _, spell in pairs(character.colors) do
+		local targets = enemies
+		local selections = {}
+		if targets then for _, target in pairs(targets) do
+			table.insert(selections, {name="", 
+				action = function() battleSystem.dealDamage("MAGIC", character, target, spell) end})
+		end end
+		spell_selection = new_menu(selections, ATT_MENU_POS, ATT_MENU_PADDING, ATT_MENU_SPACING)
+		spell_selection.name = "O"
+		table.insert(spells, spell_selection)
+	end
 	local menu = new_menu(spells, MAG_MENU_POS, MAG_MENU_PADDING, MAG_MENU_SPACING)
 	local r = menu.render
 	
@@ -121,7 +127,7 @@ function battlemenu.init(party, character, enemies, pos, padding, spacing)
 
 	table.insert(selections, attackSubMenu(party, character, enemies))
 	table.insert(selections, skillSubMenu(party, character, enemies))
-	table.insert(selections, magicSubMenu())
+	table.insert(selections, magicSubMenu(character, enemies))
 	table.insert(selections, itemSubMenu())
 	table.insert(selections, escapeSubMenu())
 

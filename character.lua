@@ -12,6 +12,7 @@ function character.new(name, image, ax, ay)
 	o.name = name
 	o.image = image
 	o.pos = {x = ax, y = ay}
+	o.colors = {}
 	o.map_pos = {x = 130, y = 130}
 	setmetatable(o, character)
 	return o
@@ -22,7 +23,7 @@ karna.skills = {skill.berserk, skill.defend}
 karna.stats = 
 {
 	constitution = 5,
-	strength = 32,
+	strength = 3000,
 	endurance = 5,
 
 	agility = 4,
@@ -164,6 +165,7 @@ for _, c in pairs({karna, alnar, lysh, nez}) do
 	c.stats.currentHp = maxHpFormula(c)
 	c.stats.currentMp = maxMp(c)
 	c.stats.currentXp = 0
+	c.stats.totalXp	  = 0
 	c.stats.currentAp = 1
 	c.colors = {{0x00,0x00,0x00}}
 	c.color = c.colors[1]
@@ -250,20 +252,19 @@ for _, c in pairs({karna, alnar, lysh, nez}) do
 end
 
 function xpForLevel(char, level) 
-	return math.floor((level + 100 / 4) * 3 ^ (level / 10))
+	return math.floor(level ^ 2)
 end
 
 function xpToLevel(char) 
 	local xp = 0
 	for i = 1, char.level do
-		xp = xp + xpForLevel(char, i)
+		xp = xp ^ (1+(math.log(i, 2.7182818)/i)) + xpForLevel(char, i)
 	end
 	return xp
 end
 
 
-function character:render_status()
-	
+function character:render_status() 
 	gfx.print(self.name, 10, 10)
 	love.graphics.draw(self.image, 100, 10)
 	love.graphics.setColor(self.color)
@@ -283,7 +284,6 @@ function character:render_status()
 	gfx.print(string.format("ACCESSORY: %s", ""..self.equipped.accessory), 60, 105)
 	gfx.print(string.format("ARMOR: %s", ""..self.equipped.armor), 60, 115)
 
-
 	gfx.print("STR: " .. self.stats.strength, 10, 25)
 	gfx.print("CON: " .. self.stats.constitution, 10, 35)
 	gfx.print("END: " .. self.stats.endurance, 10, 45)
@@ -295,7 +295,6 @@ function character:render_status()
 	gfx.print("WIS: " .. self.stats.wisdom, 10, 85)
 	gfx.print("INT: " .. self.stats.intelligence, 10, 95)
 	gfx.print("WIL: " .. self.stats.willpower, 10, 105)
-
 
 end
 
