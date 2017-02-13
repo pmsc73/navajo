@@ -68,7 +68,7 @@ skillSubMenu = function(party, character, enemies)
 		r() 
 	end
 
-	menu.name = "Skill"
+	menu.name = "Skills"
 	return menu
 end
 
@@ -80,7 +80,7 @@ magicSubMenu = function(character, enemies)
 		local selections = {}
 		if targets then for _, target in pairs(targets) do
 			table.insert(selections, {name="", 
-				action = function() battleSystem.dealDamage("MAGIC", character, target, spell) end})
+				action = function() battleSystem.dealDamage("SPELLS", character, target, spell) end})
 		end end
 		spell_selection = new_menu(selections, ATT_MENU_POS, ATT_MENU_PADDING, ATT_MENU_SPACING)
 		spell_selection.name = "O"

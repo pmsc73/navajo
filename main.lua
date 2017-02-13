@@ -18,6 +18,9 @@ require('battlestate')
 require('mainmenu')
 	-- for menuState
 
+require('intromenu')
+	-- for opening screen
+
 require('character')
 	-- for party members: karna, alnar, lysh, nez
 
@@ -25,11 +28,14 @@ require('character')
 TILE_SIZE = 32
 
 
-local current_state = kitala
+current_state = intromenu_state
 local state_changed = true
+
+dur_entities = {}
+
 onNextUpdate = function() return nil end
 
-local party = {karna, alnar, lysh, nez}
+local party = {karna}
 
 --[[
 	 Initial, one time load function, to get all resources and things in place
@@ -60,6 +66,7 @@ function changestate(state)
 		previous_state = current_state
 		onNextUpdate = function() current_state = state end
 	end
+	dur_entities = {}
 	state_changed = true
 end
 
@@ -73,6 +80,7 @@ function love.update(dt)
 	end
 
 	current_state.onUpdate(dt)
+
 end
 
 -- Draw function gets deligated to the state object
@@ -81,11 +89,25 @@ function love.draw()
 
 	for depth, entity in ipairs(current_state.entities) do
 		if entity.render ~= nil then
-			entity.render()
-		elseif entity.image ~= nil then
+			entity.render() 
+		end 
+		if entity.image ~= nil then
 			love.graphics.draw(entity.image, (entity.pos.x +7  - karna.pos.x)* TILE_SIZE, (entity.pos.y +5 - karna.pos.y) * TILE_SIZE)
 		end
 	end
+
+	-- d_ents are HIGHEST depth entities
+	for i, d_ent in ipairs(dur_entities) do 
+		if d_ent.render ~= nil then
+			d_ent.render()
+		end
+
+		d_ent.duration = d_ent.duration - 1
+		if d_ent.duration <= 0 then
+			table.remove(dur_entities, i)
+		end
+	end
+
 	if current_state.menu ~= nil then
 		for _, s in pairs(current_state.menu.selections) do
 			gfx.print(s, 100, 100)

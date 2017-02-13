@@ -13,7 +13,7 @@ local enemies_table = {}
 
 function init_enemies()
 	enemies_table = {}
-	while #enemies_table < math.floor(math.random() * 5) do
+	while #enemies_table < 4 do
 		for _, e in pairs(DB_ENEMY) do
 			if math.random() < 0.025 then
 				table.insert(enemies_table, enemy_copy(e))
@@ -35,7 +35,7 @@ function get_enemies()
 end
 
 function enemy_turn(enemy, party)
-	local target = party[math.ceil(math.random() * 4)]
+	local target = party[1]
 	battleSystem.processAttack(enemy, target)
 end
 
@@ -85,7 +85,7 @@ battleState = {
 			enemy.render = function() 
 				local charline = {x = m_menu.x + 7, y = m_menu.y + 5 + (16*(i-1))}
 
-				gfx.print(enemy.name, charline.x, charline.y)
+				gfx.print(enemy.name, charline.x, charline.y, enemy.stats.chroma)
 				if enemy.stats.currentHp == nil then
 					enemy.stats.currentHp = maxHpFormula(enemy)
 				end

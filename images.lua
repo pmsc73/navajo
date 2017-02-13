@@ -32,7 +32,12 @@ pres = {
 	background  = love.graphics.newImage("res/img/bg.png"),
 
 	-- LOCAL MAP FILES
-	kitala		= love.graphics.newImage("res/test.png")
+	kitala		= love.graphics.newImage("res/test.png"),
+
+	-- WEAPONS
+	katana = love.graphics.newImage("res/img/katana.png"),
+	scythe = love.graphics.newImage("res/img/scythe.png"),
+	book   = love.graphics.newImage("res/img/book.png")
 
 
 }

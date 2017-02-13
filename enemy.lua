@@ -23,16 +23,16 @@ function new(name, image, POW, MAG, SPD, xp)
 	e.quad = get_image(image[1], image[2])
 	e.stats = {
 		strength = POW[1],
-		endurance = POW[2],
+		fortitude = POW[2],
 		constitution = POW[3],
 
 		intelligence = MAG[1],
 		wisdom = MAG[2],
 		willpower = MAG[3],
 
-		agility = SPD[1],
-		dexterity = SPD[2],
-		luck = SPD[3]
+		dexterity = SPD[1],
+		agility = SPD[2],
+		endurance = SPD[3]
 	}
 	e.skills = {skill.nature}
 	e.xp = xp
@@ -62,11 +62,17 @@ function enemy_copy(enemy)
 	copy.name = enemy.name
 	copy.tileset = enemy.tileset
 	copy.quad = enemy.quad
+
+	copy.damage_modifier = 0
+	copy.damage_multiplier = 1
+	copy.defence_modifier = 0
+	copy.defence_multiplier = 1
 	copy.stats = {}
 	for k, v in pairs(enemy.stats) do
 
 		copy.stats[k] = math.floor((v + enemy_stats_modifier) * (enemy_stats_multiplier))
 	end
+	copy.stats["chroma"] = {math.random()*255, math.random()*255, math.random()*255} 
 	copy.xp = enemy.xp
 	return copy
 end

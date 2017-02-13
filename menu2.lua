@@ -1,5 +1,7 @@
 -- menu object
 
+require('graphics')
+
 function new_menu(selections, pos, padding, spacing, a_offset)
 	local menu = {}
 	menu.selections = selections
@@ -14,12 +16,8 @@ function new_menu(selections, pos, padding, spacing, a_offset)
 	menu.get_selected = function() 
 		return menu.selections[menu.selected]
 	end
+	if a_offset then menu.arrow_offset = a_offset end
 
-	if a_offset == nil then
-		menu.arrow_offset = 34
-	else
-		menu.arrow_offset = a_offset
-	end
 	menu.persists = true
 	return menu
 end
@@ -55,7 +53,7 @@ function handleKeyPress(menu, key)
 		return menu.previous
 	end
 
-	if menu.get_selected().scrolls then
+	if menu.get_selected().scrolls or menu.get_selected().handleSideScroll then
 		if key == "left" or key == "right" then
 			menu.get_selected().handleSideScroll(key)
 		end
@@ -70,19 +68,30 @@ function render(menu, current)
 	if menu.previous and menu.previous.persists then
 		render(menu.previous, false)
 	end
+	if menu.get_selected().description then
+		gfx.print(menu.get_selected().description, menu.pos.x + menu.padding.horizontal, 210)
+	end
 	for i, item in ipairs(menu.selections) do 
+		local isSelected = item == menu.get_selected()
+		local fg = isSelected and {255,255,255} or {128,128,128}
+		local bg = BG_COLOR
+
 		local x = menu.pos.x + menu.padding.horizontal
 		local y = menu.pos.y + menu.padding.vertical + (i-1)*menu.spacing.vertical
 		if item.s_render then
 			item.s_render()
 		end 
 		if item.name then
-			gfx.print(item.name, x, y)
-		else gfx.print(item, x, y)
+			gfx.print(item.name, x, y, fg, bg)
+		else gfx.print(item, x, y, fg, bg)
 
 		end
+		if item.tag then
+			gfx.print(item.tag, x + 100, y, fg, bg)
+		end
+
 	end
-	if current == true then 
+	if current == true and menu.arrow_offset then 
 		love.graphics.draw(res.arrow, menu.pos.x + menu.arrow_offset, -1 + menu.pos.y + (menu.selected-1)*menu.spacing.vertical)
 	end
 end

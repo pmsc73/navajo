@@ -17,19 +17,29 @@ end
 local ITEM_DB = 
 {
 	
-	new_item("Potion", "Restore health to target", {}, function(target) target[1].stats.currentHp = target[1].stats.currentHp + 1 end),
+	new_item("Potion", "Restore health to target", {}, 
+		function(target) target[1].stats.currentHp = target[1].stats.currentHp + 1 end,
+		function() return nil end
+	),
 	
-	new_item("Amulet", "A simple amulet", {["equip"] = true}),
+	new_item("Amulet", "A simple amulet", {["equip"] = true},
+		function() return nil end,
+		function() return nil end
+	),
 	
 	new_item("Bomb", "Hurt entire party", {}, 
 		function(target)  
 			for _, char in pairs(target) do 
 				char.stats.currentHp = char.stats.currentHp - 3
 			end
-		end
+		end,
+		function() return nil end
 	),
 
-	new_item("Sword", "A simple sword", {["equip"] = true, ["weapon"] = true}, nil, function() return nil end)
+	new_item("Sword", "A simple sword", {["equip"] = true, ["weapon"] = true}, 
+		function(target) target[1].damage_modifier = target[1].damage_modifier + 10 end, 
+		function() return nil end
+	)
 }
 
 function makeItemDatabase() 

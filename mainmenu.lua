@@ -144,15 +144,12 @@ local skillsMenu
 skillsMenu = function()
 	local selections = {}
 	for _, sel in pairs(partyContent) do
-		selection = new_menu({""}, {0,0}, {3,3}, {0,16})
-		selection.render = function() 
-			sel:render_skills()
-			gfx.print("!!!!!!!!", 10,10)
-		end	
 		local SKILLS = {}
 		for _, SKILL in pairs(sel.skillTree) do
 			local s = {
-				name = SKILL.name .. "   " .. "? " .. SKILL.cost, 
+				name = SKILL.name, 
+				description = SKILL.description,
+				tag = "? " .. SKILL.cost,
 				action = function()
 					SKILL.onacquire()
 					sel.stats.currentAp = sel.stats.currentAp - SKILL.cost
@@ -194,11 +191,11 @@ skillsMenu = function()
 			-- gfx.print("~", x-8, y+13)
 			-- gfx.drawStatusBar(x, y + 15, 4, 60, maxMp(char), char.stats.currentMp, {32, 160, 255}, {0,0,0})
 			
-			gfx.print("|", x-8, y + 23)
-			gfx.drawStatusBar(x, y + 25, 4, 60, xpToLevel(char), char.stats.currentXp, {255, 255, 0}, {0,0,0})
+			-- gfx.print("|", x-8, y + 23)
+			-- gfx.drawStatusBar(x, y + 25, 4, 60, xpToLevel(char), char.stats.currentXp, {255, 255, 0}, {0,0,0})
 		end
 	end
-	menu.name = "Skills"
+	menu.name = "Spells"
 	return menu
 end
 
@@ -218,7 +215,6 @@ itemMenu = function(inventory)
 	local r = menu.render
 	menu.render = function() 
 		menu_rectangle(1,1,138,200).render()
-		gfx.print(menu.get_selected().description, 10, 170)
 		r()
 	end
 
@@ -266,7 +262,7 @@ colorsMenu = function()
 		gfx.print("Color Menu", 3, 3, {255,255,255})
 		for i, color in ipairs(colors) do
 			for j, c2 in ipairs(colors) do
-					gfx.print(string.format("%+1.2f", diff(color, c2)), -15 + 22*j, 13*i, HSV(c2[1], c2[2], c2[3]))
+					gfx.print(string.format("%+1.2f", color_diff(color, c2)), -15 + 22*j, 13*i, toRGB(c2[1], c2[2], c2[3]))
 			end
 		end
 	end
@@ -291,7 +287,7 @@ storeMenu = function()
 		name("Sword <>;", 21)
 	}
 	
-	local menu = new_menu(selections, {0, 0}, {3,3}, {0,16}, 128)
+	local menu = new_menu(selections, {0, 0}, {3,3}, {0,16})
 
 
 	menu.name = "Store"
