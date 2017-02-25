@@ -92,7 +92,7 @@ end
 
 local menu = {}
 
-partyContent = {karna, alnar, lysh, nez}
+partyContent = {karna}
 
 partyComp = new(partyContent, 1, 1, 138, 200)
 

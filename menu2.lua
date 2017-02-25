@@ -24,6 +24,7 @@ end
 
 
 function handleKeyPress(menu, key) 
+	local prev_selection = menu.selected
 	if key == "up" and menu.selected - 1 >= 1 then
 		menu.selected = menu.selected - 1
 	end
@@ -50,6 +51,7 @@ function handleKeyPress(menu, key)
 	end
 
 	if key == "backspace" and menu.previous then
+		Sound.menu_previous:play()
 		return menu.previous
 	end
 
@@ -57,6 +59,10 @@ function handleKeyPress(menu, key)
 		if key == "left" or key == "right" then
 			menu.get_selected().handleSideScroll(key)
 		end
+	end
+
+	if menu.selected ~= prev_selection then
+		Sound.menu_sel_change:play() 
 	end
 	return menu
 end

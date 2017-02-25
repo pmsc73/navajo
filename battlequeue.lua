@@ -15,23 +15,23 @@ end
 
 function battleQueueInit(actors)
 	local LRU = {}
-	local min_agility = actors[1].stats.agility
+	local min_agi = actors[1].stats.agi
 
 	for i, actor in ipairs(actors) do
-		if actor.stats.agility < min_agility then
-			min_agility = actor.stats.agility
+		if actor.stats.agi < min_agi then
+			min_agi = actor.stats.agi
 		end
 	end
 	
 	for i, actor in ipairs(actors) do
 		LRU[i] = actor
 	end
-	table.sort(LRU, function(a,b) return a.stats.agility > b.stats.agility end)
+	table.sort(LRU, function(a,b) return a.stats.agi > b.stats.agi end)
 
 	local totalTurns = 0
 	local maxTurns = 0
 	for i, actor in ipairs(actors) do
-		actor.turns = math.max(1, calculateTurns(actor.stats.agility, min_agility))
+		actor.turns = math.max(1, calculateTurns(actor.stats.agi, min_agi))
 		maxTurns = math.max(maxTurns, actor.turns)
 		totalTurns = totalTurns + actor.turns
 	end

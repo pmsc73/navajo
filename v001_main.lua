@@ -33,13 +33,13 @@ function love.load()
 	table.insert(entities, arrow)
 
 	zombie = {name = "Zombie", image=res.enemy_zombie, pos={x=10, y=20}}
-	zombie.stats = {agility = 1, constitution = 5, endurance = 1, wisdom = 3}
+	zombie.stats = {agi = 1, con = 5, edr = 1, wis = 3}
 
 	ghoul = {name = "Ghoul", image=res.enemy_ghoul, pos={x=10, y=64}}
-	ghoul.stats = {agility = 2, constitution = 3.5, endurance = 2, wisdom = 1}
+	ghoul.stats = {agi = 2, con = 3.5, edr = 2, wis = 1}
 
 	puddle = {name = "Puddle", image=res.enemy_puddle, pos={x=10, y=108}}
-	puddle.stats = {agility = 0, constitution = 6, endurance = 1, wisdom = 1}
+	puddle.stats = {agi = 0, con = 6, edr = 1, wis = 1}
 
 	table.insert(enemies, zombie)
 	table.insert(enemies, ghoul)
@@ -85,7 +85,7 @@ function love.load()
 		actionsArray[i] = v
 	end
 
-	table.sort(actionsArray, function(a,b) return a.stats.agility > b.stats.agility end)
+	table.sort(actionsArray, function(a,b) return a.stats.agi > b.stats.agi end)
 
 	menu = menuStack.push(b_menu)
 	state = {}

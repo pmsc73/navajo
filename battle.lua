@@ -32,11 +32,11 @@ function battleSystem.dealDamage(t, source, target, element)
 	end
 
 	if t == PHYSICAL then 
-		damage  = (1 + baseDamage) * source.stats.strength
-		defence = (1 + baseDefence) * target.stats.fortitude
+		damage  = (1 + baseDamage) * source.stats.str
+		defence = (1 + baseDefence) * target.stats.frt
 	elseif t == MAGIC then 
-		damage  = (1 + baseDamage) * source.stats.intelligence
-		defence = (1 + baseDamage) * target.stats.wisdom
+		damage  = (1 + baseDamage) * source.stats.int
+		defence = (1 + baseDamage) * target.stats.wis
 	end
 
 	if target.stats.currentHp == nil then 
@@ -94,31 +94,31 @@ end
 
 function maxHpFormula(character) 
 	local base = 2
-	local modifier = character.stats.fortitude + character.stats.wisdom + character.stats.endurance
-	local multiplier = character.stats.constitution
+	local modifier = character.stats.frt + character.stats.wis + character.stats.edr
+	local multiplier = character.stats.con
 
 	return radic_stat(base, multiplier, modifier)
 end
 
 function maxMp(character) 
 	local base = 4
-	local modifier = character.stats.intelligence + character.stats.dexterity + character.stats.constitution
-	local multiplier = character.stats.willpower
+	local modifier = character.stats.int + character.stats.dex + character.stats.con
+	local multiplier = character.stats.wll
 
 	return radic_stat(base, multiplier, modifier)
 end
 
 function maxStamina(character) 
 	local base = 1
-	local modifier = character.stats.agility + character.stats.strength + character.stats.willpower
-	local multiplier = character.stats.endurance
+	local modifier = character.stats.agi + character.stats.str + character.stats.wll
+	local multiplier = character.stats.edr
 
 	return radic_stat(base, multiplier, modifier)
 end
 
 function hpRegenRate(character) 
 	local base = 1/4
-	local modifier = math.min(character.stats.strength, character.stats.fortitude, character.stats.constitution)
+	local modifier = math.min(character.stats.str, character.stats.frt, character.stats.con)
 	local multiplier = 1
 
 	return basic_stat(base, multiplier, modifier)
@@ -126,7 +126,7 @@ end
 
 function mpRegenRate(character) 
 	local base = 1/8
-	local modifier = math.min(character.stats.intelligence, character.stats.wisdom, character.stats.willpower)
+	local modifier = math.min(character.stats.int, character.stats.wis, character.stats.wll)
 	local multiplier = 1
 
 	return basic_stat(base, multiplier, modifier)
@@ -134,7 +134,7 @@ end
 
 function spRegenRate(character)
 	local base = 1/2
-	local modifier = math.min(character.stats.dexterity, character.stats.agility, character.stats.endurance)
+	local modifier = math.min(character.stats.dex, character.stats.agi, character.stats.edr)
 	local multiplier = 1
 
 	return basic_stat(base, multiplier, modifier)

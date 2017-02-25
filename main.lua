@@ -24,6 +24,9 @@ require('intromenu')
 require('character')
 	-- for party members: karna, alnar, lysh, nez
 
+require('sound')
+	-- for Sound, containing all sound files
+	
 -- this constant is used for drawing all entities in line with tiles
 TILE_SIZE = 32
 

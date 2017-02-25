@@ -22,17 +22,17 @@ function new(name, image, POW, MAG, SPD, xp)
 	e.tileset = tiles
 	e.quad = get_image(image[1], image[2])
 	e.stats = {
-		strength = POW[1],
-		fortitude = POW[2],
-		constitution = POW[3],
+		str = POW[1],
+		frt = POW[2],
+		con = POW[3],
 
-		intelligence = MAG[1],
-		wisdom = MAG[2],
-		willpower = MAG[3],
+		int = MAG[1],
+		wis = MAG[2],
+		wll = MAG[3],
 
-		dexterity = SPD[1],
-		agility = SPD[2],
-		endurance = SPD[3]
+		dex = SPD[1],
+		agi = SPD[2],
+		edr = SPD[3]
 	}
 	e.skills = {skill.nature}
 	e.xp = xp

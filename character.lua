@@ -15,9 +15,9 @@ function character.new(name, image, ax, ay)
 	--combat stats
 	o.colors = {}
 	o.stats = {
-		strength     = 1, fortitude = 1, constitution = 1,
-		intelligence = 1, wisdom    = 1, willpower    = 1,
-		dexterity 	 = 1, agility   = 1, endurance    = 1
+		str     = 1, frt = 1, con = 1,
+		int = 1, wis   = 1, wll   = 1,
+		dex 	 = 1, agi   = 1, edr    = 1
 	}
 
 	o.damage_modifier = 0
@@ -41,7 +41,7 @@ karna.skillTree = {}
 
 -- alnar.skills[1].use = function(enemy) 
 -- 	battleSystem.dealDamage(MAGIC, alnar, enemy)
--- 	battleSystem.heal(alnar, alnar.stats.intelligence / enemy.stats.wisdom)
+-- 	battleSystem.heal(alnar, alnar.stats.int / enemy.stats.wis)
 -- end
 
 -- alnar.skills[2].use = function(enemy)
@@ -63,7 +63,7 @@ karna.skillTree = {}
 -- nez.skills = {skill.meditate, skill.nature}
 
 -- nez.skills[1].use = function()
--- 	battleSystem.heal(nez, nez.stats.wisdom)
+-- 	battleSystem.heal(nez, nez.stats.wis)
 -- end
 
 -- nez.skills[2].use = function(enemies)
@@ -217,17 +217,17 @@ function character:render_status()
 	gfx.print(string.format("ACCESSORY: %s", ""..self.equipped.accessory), 60, 105)
 	gfx.print(string.format("ARMOR: %s", ""..self.equipped.armor), 60, 115)
 
-	gfx.print("Strength: " .. self.stats.strength, 10, 25)
-	gfx.print("Fortitude: " .. self.stats.fortitude, 10, 35)
-	gfx.print("Constitution: " .. self.stats.constitution, 10, 45)
+	gfx.print("Strength: " .. self.stats.str, 10, 25)
+	gfx.print("Fortitude: " .. self.stats.frt, 10, 35)
+	gfx.print("Constitution: " .. self.stats.con, 10, 45)
 
-	gfx.print("Dexterity: " .. self.stats.dexterity, 10, 55)
-	gfx.print("Agility: " .. self.stats.agility, 10, 65)
-	gfx.print("Endurance: " .. self.stats.endurance, 10, 75)
+	gfx.print("Dexterity: " .. self.stats.dex, 10, 55)
+	gfx.print("Agility: " .. self.stats.agi, 10, 65)
+	gfx.print("Endurance: " .. self.stats.edr, 10, 75)
 	
-	gfx.print("Intelligence: " .. self.stats.intelligence, 10, 85)
-	gfx.print("Wisdom: " .. self.stats.wisdom, 10, 95)
-	gfx.print("Willpower: " .. self.stats.willpower, 10, 105)
+	gfx.print("Intelligence: " .. self.stats.int, 10, 85)
+	gfx.print("Wisdom: " .. self.stats.wis, 10, 95)
+	gfx.print("Willpower: " .. self.stats.wll, 10, 105)
 
 end
 
