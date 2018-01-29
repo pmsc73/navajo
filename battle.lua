@@ -2,9 +2,11 @@ require 'images'
 require 'boxes'
 require 'graphics'
 require 'mymenu'
-
+require 'item'
+require 'inventory'
 require 'battlequeue'
 require 'state'
+require 'log'
 
 battleSystem = {} 
 
@@ -48,15 +50,41 @@ function battleSystem.dealDamage(t, source, target, element)
 		netDamage = 0
 	end
 	target.stats.currentHp = round(target.stats.currentHp - netDamage)
+	logger.logDamage(target.name, netDamage)
 
 	-- add damage graphic!
 	gfx.create_text_entity(netDamage, 150, 50, 25, element)
 
 	if target.stats.currentHp <= 0 then 
-		target.dead = true
-		target.stats.currentHp = 0
-		processExperience(source, target)
+		-- on death
+		processDeath(target, source)
 	end
+end
+
+local i = 0
+function processDeath(target, source)
+	target.dead = true
+	target.stats.currentHp = 0
+	processExperience(source, target)
+	logger.logDeath(target.name)
+
+	-- add item to inventory?
+	local temp_itemdb = ITEM_DATABASE
+	local name = target.name .. ":" .. i
+	table.insert(temp_itemdb, 
+		new_item(name, "!",
+		{ 
+			["equip"] = true,
+			["weapon"] = true
+		},
+		function(t) t[1].damage_modifier = t[1].damage_modifier + 2 end,
+		function() return nil end
+		)
+	)
+	INVENTORY.name=1
+	i = i + 1
+
+	ITEM_DATABASE = temp_itemdb
 end
 
 function battleSystem.heal(character, base_modifier) 

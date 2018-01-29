@@ -199,35 +199,35 @@ end
 
 function character:render_status() 
 	gfx.print(self.name, 10, 10)
-	love.graphics.draw(self.image, 100, 10)
+	love.graphics.draw(self.image, 5, 5)
 	love.graphics.setColor(self.color)
 	love.graphics.circle("line", 80, 10, 6)
-	gfx.print(string.format("%6d", self.stats.currentXp), 100, 58)
+	gfx.print(string.format("%6d", self.stats.currentXp), 10, 58)
 	love.graphics.rectangle("fill", 100, 67, 24, 1)
-	gfx.print("|", 90, 64)
+	gfx.print("|", 9, 64)
 
-	gfx.print("? " .. self.stats.currentAp, 60, 20)
+	gfx.print("? " .. self.stats.currentAp, 10, 20)
 
-	gfx.print(string.format("%6d", xpToLevel(self)), 100, 68)
+	gfx.print(string.format("%6d", xpToLevel(self)), 10, 68)
 
-	gfx.print(string.format("%s%2d", "Lv.", self.level), 60, 64)
+	gfx.print(string.format("%s%2d", "Lv.", self.level), 10, 64)
 
-	gfx.print(string.format("HAND: %s", ""..self.equipped.hand), 60, 85)
-	gfx.print(string.format("HEAD: %s", ""..self.equipped.head), 60, 95)
-	gfx.print(string.format("ACCESSORY: %s", ""..self.equipped.accessory), 60, 105)
-	gfx.print(string.format("ARMOR: %s", ""..self.equipped.armor), 60, 115)
+	-- gfx.print(string.format("HAND: %s", ""..self.equipped.hand), 60, 85)
+	-- gfx.print(string.format("HEAD: %s", ""..self.equipped.head), 60, 95)
+	-- gfx.print(string.format("ACCESSORY: %s", ""..self.equipped.accessory), 60, 105)
+	-- gfx.print(string.format("ARMOR: %s", ""..self.equipped.armor), 60, 115)
 
-	gfx.print("Strength: " .. self.stats.str, 10, 25)
-	gfx.print("Fortitude: " .. self.stats.frt, 10, 35)
-	gfx.print("Constitution: " .. self.stats.con, 10, 45)
+	gfx.print(string.format("%-5s %2d", "STR:", self.stats.str), 40, 25)
+	gfx.print(string.format("%-5s %2d", "FRT:", self.stats.frt), 40, 34)
+	gfx.print(string.format("%-5s %2d", "CON:", self.stats.con), 40, 43)
 
-	gfx.print("Dexterity: " .. self.stats.dex, 10, 55)
-	gfx.print("Agility: " .. self.stats.agi, 10, 65)
-	gfx.print("Endurance: " .. self.stats.edr, 10, 75)
+	gfx.print(string.format("%-5s %2d", "DEX:", self.stats.dex), 40, 52)
+	gfx.print(string.format("%-5s %2d", "AGI:", self.stats.agi), 40, 61)
+	gfx.print(string.format("%-5s %2d", "END:", self.stats.edr), 40, 70)
 	
-	gfx.print("Intelligence: " .. self.stats.int, 10, 85)
-	gfx.print("Wisdom: " .. self.stats.wis, 10, 95)
-	gfx.print("Willpower: " .. self.stats.wll, 10, 105)
+	gfx.print(string.format("%-5s %2d", "INT:", self.stats.int), 40, 79)
+	gfx.print(string.format("%-5s %2d", "WIS:",  self.stats.wis), 40, 88)
+	gfx.print(string.format("%-5s %2d", "WILL:", self.stats.wll), 40, 97)
 
 end
 

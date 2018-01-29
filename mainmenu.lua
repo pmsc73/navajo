@@ -5,8 +5,10 @@ require 'graphics'
 require 'battle'
 require 'menu2'
 require 'item'
+require 'inventory'
 require 'images'
 require 'state'
+require 'log'
 
 
 function itemSubMenu(item)
@@ -94,7 +96,7 @@ local menu = {}
 
 partyContent = {karna}
 
-partyComp = new(partyContent, 1, 1, 138, 200)
+partyComp = new(partyContent, 1, 1, 125, 118)
 
 local menuMenu
 menuMenu = function()
@@ -214,7 +216,7 @@ itemMenu = function(inventory)
 	menu.persists = true
 	local r = menu.render
 	menu.render = function() 
-		menu_rectangle(1,1,138,200).render()
+	--	menu_rectangle(1,1,138,200).render()
 		r()
 	end
 
@@ -262,7 +264,8 @@ colorsMenu = function()
 		gfx.print("Color Menu", 3, 3, {255,255,255})
 		for i, color in ipairs(colors) do
 			for j, c2 in ipairs(colors) do
-					gfx.print(string.format("%+1.2f", color_diff(color, c2)), -15 + 22*j, 13*i, toRGB(c2[1], c2[2], c2[3]))
+				love.graphics.setColor(toRGB(c2[1], c2[2], c2[3]))
+				love.graphics.circle("fill", -5 + 12*j,  10 +8*i, 3 * (2 ^ (color_diff(color, c2))))
 			end
 		end
 	end
@@ -270,6 +273,76 @@ colorsMenu = function()
 	menu.name = "Colors"
 	return menu
 end
+
+local testMenu
+testMenu = function() 
+	local cus_selections = {}
+
+	local stepBar = { 
+		name = "Steps", 
+		scrolls = true, 
+		pos = {x = 4, y = 16},
+		dim = {w = 100, h = 5},
+		val = 1.618 * 10,
+	}
+	stepBar.handleSideScroll = function(key) 
+			if key == "left" then stepBar.val = stepBar.val - 1 end
+			if key == "right" then stepBar.val = stepBar.val + 1 end
+		end
+
+
+
+	local slideBar = { 
+		name = "Slides", 
+		scrolls = true,
+		pos = {x = 4, y = 28},
+		dim = {w = 100, h = 5},
+		val = 5,
+		
+	}
+	slideBar.handleSideScroll = function(key) 
+			if key == "left" then slideBar.val = slideBar.val - 1 end
+			if key == "right" then slideBar.val = slideBar.val + 1 end
+	end
+
+	for i, bar in ipairs({stepBar, slideBar}) do
+		bar.s_render = function() 
+			gfx.drawStatusBar(bar.pos.x, bar.pos.y,
+								bar.dim.h, bar.dim.w, 
+								10, bar.val, {127,127,127}, {255,255,255})
+			gfx.print(bar.val, bar.pos.x + bar.dim.w + 3, bar.pos.y)
+		end
+
+		table.insert(cus_selections, bar)
+	end
+
+	
+	local col = {255,0,0}
+
+
+	local menu = new_menu(cus_selections, {0,0}, {3,3}, {0,16})
+	local r = menu.render
+
+	-- stuff here
+
+	menu.render = function()
+		local steps = stepBar.val
+		local slides = slideBar.val
+		love.graphics.setColor(0,0,0)
+		love.graphics.rectangle("fill", 0, 0, 1000, 1000)
+		r()
+		c_hsv = toHSV(col)
+		for i=1, slides do
+			c_hsv[1] = c_hsv[1] + (steps)
+			love.graphics.setColor(toRGB(c_hsv[1], c_hsv[2], c_hsv[3]))
+			love.graphics.circle("fill", 2 + 2*i, 60, 12)
+		end
+	end
+
+	menu.name = "Test"
+	return menu
+end
+
 
 local storeMenu
 storeMenu = function()
@@ -294,20 +367,35 @@ storeMenu = function()
 	return menu
 end
 
+local logMenu
+logMenu = function() 
+
+	local selections = {}
+	local log = logger.log()
+	for i, line in pairs(log) do
+		local selection = ""..i
+		table.insert(selections, selection)
+	end
+
+
+	local menu = new_menu(selections, {0, 0}, {3,3}, {0,16})
+	menu.name = "Log"
+	return menu
+end
 menuContent = {}
 table.insert(menuContent, menuMenu())
 
 table.insert(menuContent, skillsMenu())
 
-table.insert(menuContent, itemMenu({["Sword"] = 1, ["Potion"] = 9, ["Amulet"] = 1, ["Bomb"] = 1}))
+table.insert(menuContent, itemMenu(INVENTORY))
 
 table.insert(menuContent, colorsMenu())
 
 table.insert(menuContent, storeMenu())
 
-table.insert(menuContent, "Options")
+table.insert(menuContent, logMenu())
 
-menuComp = new_menu(menuContent, {140, 1}, {3, 3}, {0, 12})
+menuComp = new_menu(menuContent, {127, 1}, {3, 3}, {0, 12})
 
 mapContent = {"Pirate Ship"}
 mapComp = new(mapContent, 140, 91, 59, 24)

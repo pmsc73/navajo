@@ -17,10 +17,6 @@ function gfx.drawStatusBar(x, y, height, maxWidth, maxValue, currentValue, color
 end
 
 function gfx.print(string, x, y, FG, BG)
-	local col_fg = FG_COLOR
-	if FG then 
-		col_fg = FG
-	end
 	love.graphics.setColor(BG or BG_COLOR)
 	love.graphics.print(string, x-1, y)
 

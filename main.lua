@@ -49,7 +49,7 @@ function love.load()
 	font = love.graphics.newImageFont(fn_image,
 		" abcdefghijklmnopqrstuvwxyz" ..
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ" ..
-		"1234567890!@#%^&*()-_=[]{}.?/:\\~|<>;\""
+		"1234567890!@#%^&*()-_=[]{}.?/:\\~|<>;\""	
 		)
 	love.graphics.setFont(font)
 
