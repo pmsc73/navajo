@@ -5,7 +5,7 @@
 	- as an abstract object. Instances of state need to have
 	- a provided draw() and update() function
 	-
-]]-- 
+]]--
 
 function state(name, entities, update)
 	local s = {}
@@ -28,8 +28,10 @@ end
 ops = {}
 phys = {}
 
+
 -- Non-null default value operator
 function ops.nndv(var, default)
+	-- var ? var : default
 	if var then return var else return default end
 end
 

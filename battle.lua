@@ -6,7 +6,6 @@ require 'item'
 require 'inventory'
 require 'battlequeue'
 require 'state'
-require 'log'
 
 battleSystem = {} 
 
@@ -18,14 +17,20 @@ MAGIC		= "MAGIC"
 ELEM_NONE	= "NON ELEMENTAL"
 
 function battleSystem.dealDamage(t, source, target, element)
-	baseDamageMod   = ops.nndv(source.damage_modifier, 0)
-	baseDefenceMod  = ops.nndv(target.defence_modifier, 0)
-	baseDamageMult  = ops.nndv(source.damage_multiplier, 1)
-	baseDefenceMult = ops.nndv(source.defence_multiplier, 1)
+	baseDamageMod   = ops.nndv(source.damage_modifier,    0)	
+	baseDefenceMod  = ops.nndv(target.defence_modifier,   0)
+	baseDamageMult  = ops.nndv(source.damage_multiplier,  1)
+	baseDefenceMult = ops.nndv(target.defence_multiplier, 1)
 
-
-	baseDamage  = baseDamageMult  * (math.random() + baseDamageMod)
-	baseDefence = baseDefenceMult * (math.random() + baseDefenceMod)
+	local tkey = target.name
+	if source.name == "Karna" then 
+		baseDamageMod   = baseDamageMod   + ops.nndv(source.cross_damage_modifier[tkey],  0)
+		baseDamageMult  = baseDamageMult  * ops.nndv(source.cross_damage_modifier[tkey],  1)
+		baseDefenceMod  = baseDefenceMod  + ops.nndv(source.cross_defence_modifier[tkey], 0)
+		baseDefenceMult = baseDefenceMult * ops.nndv(source.cross_defence_modifier[tkey], 1)
+	end
+	baseDamage  = (baseDamageMult) * (math.random() + baseDamageMod) 
+	baseDefence = (baseDefenceMult) * (math.random() + baseDefenceMod)
 	chromaMod = 1
 
 	if element ~= nil then 
@@ -50,8 +55,9 @@ function battleSystem.dealDamage(t, source, target, element)
 		netDamage = 0
 	end
 	target.stats.currentHp = round(target.stats.currentHp - netDamage)
-	logger.logDamage(target.name, netDamage)
-
+	if source.name == "Karna" then
+		logDamage(target.name, netDamage)
+	end
 	-- add damage graphic!
 	gfx.create_text_entity(netDamage, 150, 50, 25, element)
 
@@ -66,8 +72,9 @@ function processDeath(target, source)
 	target.dead = true
 	target.stats.currentHp = 0
 	processExperience(source, target)
-	logger.logDeath(target.name)
-
+	if source.name == "Karna" then
+		logDeath(target.name)
+	end
 	-- add item to inventory?
 	local temp_itemdb = ITEM_DATABASE
 	local name = target.name .. ":" .. i

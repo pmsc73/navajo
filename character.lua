@@ -1,6 +1,7 @@
 require 'images'
 require 'skill'
 require 'battle'
+require 'enemy'
 -- Character Entity
 
 character = {} 
@@ -24,6 +25,10 @@ function character.new(name, image, ax, ay)
 	o.damage_multiplier = 1
 	o.defence_modifier = 0
 	o.defence_multiplier = 1
+	o.cross_damage_modifier = {}
+	o.cross_damage_multiplier = {}
+	o.cross_defence_modifier = {}
+	o.cross_defence_multiplier = {}
 
 	o.pos = {x = ax, y = ay}
 	o.map_pos = {x = 130, y = 130}
@@ -35,44 +40,99 @@ karna = character.new("Karna", res.karna, 6,  6)
 karna.skills = {skill.berserk, skill.defend}
 
 karna.skillTree = {}
+karna.tasks = {}
 
--- alnar = character.new("Alnar", res.alnar, 340, 74)
--- alnar.skills = {skill.drain, skill.blast}
+function init_log() 
+	local log = {}
 
--- alnar.skills[1].use = function(enemy) 
--- 	battleSystem.dealDamage(MAGIC, alnar, enemy)
--- 	battleSystem.heal(alnar, alnar.stats.int / enemy.stats.wis)
--- end
+	for i, enemy in ipairs(DB_ENEMY) do
+		local name = enemy.name
+		log[name] = {
+			damage = 0,
+			kills = 0
+		}
+		karna.cross_damage_modifier[name] = 0
+		karna.cross_damage_multiplier[name] = 1
+		karna.tasks[name] = {
+			goal = 1,
+			current = 0,
+			oncomplete = function() 
+				karna.cross_damage_multiplier[name] = karna.cross_damage_multiplier[name] * 10
+			end,
+			goalScale = 1,
+			rewardScale = 1
+		}
+		karna.tasks[name].update = function(delta)
+			local t = karna.tasks[name]
+			t.current = t.current + delta
+				if t.current >= t.goal then
+					t.oncomplete()
+					if t.goalScale > 0 then
+						t.goal = t.goal * t.goalScale
+					end
+				end
+			end
 
--- alnar.skills[2].use = function(enemy)
--- 	battleSystem.dealDamage(MAGIC, alnar, enemy, ELEM_NONE)
--- end
+	end
+	return log
+end
 
--- alnar.skillTree = {}
+karna.log = init_log()
 
--- lysh = character.new("Lysh",   res.lysh, 340, 116)
--- lysh.skills = {skill.shoot, skill.parry}
+function logDamage(name, d) 
+	local dmg = karna.log[name].damage
+	karna.log[name].damage = dmg + d
 
--- lysh.skills[1].use = function(enemy)
--- 	battleSystem.dealDamage(PHYSICAL, lysh, enemy)
--- end
+end
 
--- lysh.skillTree = {}
+function getDamage(name)
+	return karna.log[name].damage
+end
 
--- nez = character.new("Nez",     res.nez, 340,158)
--- nez.skills = {skill.meditate, skill.nature}
+function logDeath(name)
+	if name ~= "Karna" then
+		local lkills = karna.log[name].kills
+		karna.log[name].kills = lkills + 1
+		karna.tasks[name].update(1)
+	end
+end
 
--- nez.skills[1].use = function()
--- 	battleSystem.heal(nez, nez.stats.wis)
--- end
+function getKills(name)
+	return karna.log[name].kills
+end
 
--- nez.skills[2].use = function(enemies)
--- 	for _, enemy in pairs(enemies) do
--- 		battleSystem.dealDamage(MAGIC, nez, enemy, ELEM_NONE)
--- 	end
--- end
+function battlelog() 
+	return karna.log
+end
 
--- nez.skillTree = {}
+local attuneSpell
+attuneSpell = function(c, spellName, desc, primary_color)
+	return {
+		name=spellName,
+		description = desc,
+		cost = 1,
+		onacquire = function()
+			if not c.colors_used then
+				c.colors_used = 0
+
+			elseif c.colors_used >= 8 then
+				for n, co in ipairs(c.colors) do
+					if co == c.color then
+						table.remove(c.colors, n)
+					end
+				end
+				local lc = c.color
+				table.insert(c.colors, lc)
+				table.insert(c.colors, {0x00, 0x00, 0x00})
+				c.color = c.colors[#c.colors]
+				c.colors_used = 0
+			end
+
+			c.color[primary_color] = c.color[primary_color] + 0x80 *  math.pow((1/2),c.colors_used)
+			c.colors_used = c.colors_used + 1
+		end
+	}
+end
 
 for _, c in pairs({karna}) do
 	c.equipped = 
@@ -93,84 +153,16 @@ for _, c in pairs({karna}) do
 
 	c.colors = {{0,0,0}}
 	c.color = c.colors[1]
+
+
 	table.insert(c.skillTree, 
-		{
-			name="Attune: Red",
-			description = "Draw upon the power of Talathir\n violent father to Raejk and Uennys",
-			cost = 1,
-			onacquire = function()
-				if not c.colors_used then
-					c.colors_used = 0
-
-				elseif c.colors_used >= 8 then
-					for n, co in ipairs(c.colors) do
-						if co == c.color then
-							table.remove(c.colors, n)
-						end
-					end
-					local lc = c.color
-					table.insert(c.colors, lc)
-					table.insert(c.colors, {0x00, 0x00, 0x00})
-					c.color = c.colors[#c.colors]
-					c.colors_used = 0
-				end
-
-				c.color[1] = c.color[1] + 0x80 *  math.pow((1/2),c.colors_used)
-				c.colors_used = c.colors_used + 1
-			end
-		}
+		attuneSpell(c, "Attune: Red", "Draw upon the power of Talathir\n violent father to Raejk and Uennys", 1)
 	)
 	table.insert(c.skillTree, 
-		{
-			name="Attune: Green",
-			description = "Draw upon the power of Vyul\n fair judge, and brother to Nezelatl",
-			cost = 1,
-			onacquire = function()
-				if not c.colors_used then
-					c.colors_used = 0
-
-				elseif c.colors_used >= 8 then
-					for n, co in ipairs(c.colors) do
-						if co == c.color then
-							table.remove(c.colors, n)
-						end
-					end
-					local lc = c.color
-					table.insert(c.colors, lc)
-					table.insert(c.colors, {0x00, 0x00, 0x00})
-					c.color = c.colors[#c.colors]
-					c.colors_used = 0
-				end
-				c.color[2] = c.color[2] + 0x80 *  math.pow((1/2),c.colors_used)
-				c.colors_used = c.colors_used + 1
-			end
-		}
+		attuneSpell(c, "Attune: Green", "Draw upon the power of Vyul\n fair judge, and brother to Nezelatl", 2)
 	)
 	table.insert(c.skillTree,
-		{
-			name="Attune: Blue",
-			description = "Draw upon the power of Mebume\n the mother of all demands respect",
-			cost = 1,
-			onacquire = function()
-				if not c.colors_used then
-					c.colors_used = 0
-				
-				elseif c.colors_used >= 8 then
-					for n, co in ipairs(c.colors) do
-						if co == c.color then
-							table.remove(c.colors, n)
-						end
-					end
-					local lc = c.color
-					table.insert(c.colors, lc)
-					table.insert(c.colors, {0x00, 0x00, 0x00})
-					c.color = c.colors[#c.colors]
-					c.colors_used = 0
-				end
-				c.color[3] = c.color[3] + 0x80 *  math.pow((1/2),c.colors_used)
-				c.colors_used = c.colors_used + 1
-			end
-		}
+		attuneSpell(c, "Attune: Blue", "Draw upon the power of Mebume\n the mother of all demands respect", 3)
 	)
 
 	table.insert(c.skillTree, {

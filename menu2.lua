@@ -25,12 +25,20 @@ end
 
 function handleKeyPress(menu, key) 
 	local prev_selection = menu.selected
-	if key == "up" and menu.selected - 1 >= 1 then
-		menu.selected = menu.selected - 1
+	if key == "up"  then
+		if menu.selected - 1 >= 1 then
+			menu.selected = menu.selected - 1
+		else 
+			menu.selected = #menu.selections
+		end
 	end
 
-	if key == "down" and menu.selected + 1 <= #menu.selections then
-		menu.selected = menu.selected + 1
+	if key == "down"  then
+		if menu.selected + 1 <= #menu.selections then
+			menu.selected = menu.selected + 1
+		else
+			menu.selected = 1
+		end
 	end
 
 	if key == "return"  then 
@@ -73,6 +81,9 @@ function render(menu, current)
 	end
 	if menu.previous and menu.previous.persists then
 		render(menu.previous, false)
+	end
+	if menu.get_selected().f_description then
+		menu.get_selected().description = menu.get_selected().f_description()
 	end
 	if menu.get_selected().description then
 		gfx.print(menu.get_selected().description, menu.pos.x + menu.padding.horizontal, 210)

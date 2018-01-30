@@ -8,8 +8,6 @@ require 'item'
 require 'inventory'
 require 'images'
 require 'state'
-require 'log'
-
 
 function itemSubMenu(item)
 	local selections = {}
@@ -371,9 +369,13 @@ local logMenu
 logMenu = function() 
 
 	local selections = {}
-	local log = logger.log()
-	for i, line in pairs(log) do
-		local selection = ""..i
+	table.insert(selections, "!!!!")
+	for i, line in pairs(battlelog()) do
+		local selection = {}
+		selection.name = i
+		selection.f_description = function()
+			return "Damage: " .. getDamage(i) .."\nKills: " .. getKills(i) .. "\nX-Mult: " .. karna.cross_damage_multiplier[i]
+		end
 		table.insert(selections, selection)
 	end
 
