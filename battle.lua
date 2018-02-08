@@ -124,7 +124,7 @@ function basic_stat(base, multiplier, modifier)
 end
 
 function radic_stat(base, multiplier, modifier) 
-	return base * math.sqrt(multiplier^2 + multiplier*modifier)
+	return math.floor(base * math.sqrt(multiplier^2 + multiplier*modifier))
 end
 
 function maxHpFormula(character) 

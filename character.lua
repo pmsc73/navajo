@@ -42,6 +42,20 @@ karna.skills = {skill.berserk, skill.defend}
 karna.skillTree = {}
 karna.tasks = {}
 
+karna.tasks.new = function(goal, oncomplete, goalScale, rewardScale)
+	local task = {}
+	task.level = 0
+	task.goal = goal
+	task.current = 0
+	task.oncomplete = function()
+		task.level = task.level + 1
+		oncomplete()
+	end
+	task.goalScale = goalScale
+	task.rewardScale = rewardScale
+	return task
+end
+
 function init_log() 
 	local log = {}
 
@@ -55,24 +69,40 @@ function init_log()
 		karna.cross_damage_multiplier[name] = 1
 		karna.tasks[name] = 
 		{
-			{
-				goal = 1,
-				current = 0,
-				oncomplete = function() 
+			karna.tasks.new(1, 
+				function() 
 					karna.cross_damage_multiplier[name] = karna.cross_damage_multiplier[name] * 1.1
 				end,
-				goalScale = 10,
-				rewardScale = 1
-			},
-			{
-				goal = 10,
-				current = 0,
-				oncomplete = function()
+				10, 1
+			),
+			karna.tasks.new(10, 
+				function()
 					karna.cross_damage_modifier[name] = karna.cross_damage_modifier[name] + 1
 				end,
-				goalScale = 5,
-				rewardScale = 1
-			}
+				10, 1
+			)
+			-- {
+			-- 	level = 0,
+			-- 	goal = 1,
+			-- 	current = 0,
+			-- 	oncomplete = function()
+			-- 		level = level + 1 
+			-- 		karna.cross_damage_multiplier[name] = karna.cross_damage_multiplier[name] * 1.1
+			-- 	end,
+			-- 	goalScale = 10,
+			-- 	rewardScale = 1
+			-- },
+			-- {
+			-- 	level = 0,
+			-- 	goal = 10,
+			-- 	current = 0,
+			-- 	oncomplete = function()
+			-- 		level = level + 1
+			-- 		karna.cross_damage_modifier[name] = karna.cross_damage_modifier[name] + 1
+			-- 	end,
+			-- 	goalScale = 5,
+			-- 	rewardScale = 1
+			-- }
 		}
 		for i, task in ipairs(karna.tasks[name]) do 
 
