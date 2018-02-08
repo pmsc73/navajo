@@ -94,7 +94,7 @@ local menu = {}
 
 partyContent = {karna}
 
-partyComp = new(partyContent, 1, 1, 125, 118)
+partyComp = new(partyContent, 1, 1, 232,150)
 
 local menuMenu
 menuMenu = function()
@@ -299,8 +299,8 @@ testMenu = function()
 		
 	}
 	slideBar.handleSideScroll = function(key) 
-			if key == "left" then slideBar.val = slideBar.val - 1 end
-			if key == "right" then slideBar.val = slideBar.val + 1 end
+		if key == "left" then slideBar.val = slideBar.val - 1 end
+		if key == "right" then slideBar.val = slideBar.val + 1 end
 	end
 
 	for i, bar in ipairs({stepBar, slideBar}) do
@@ -374,7 +374,7 @@ logMenu = function()
 		local selection = {}
 		selection.name = i
 		selection.f_description = function()
-			return "Damage: " .. getDamage(i) .."\nKills: " .. getKills(i) .. "\nX-Mult: " .. karna.cross_damage_multiplier[i]
+			return "Damage: " .. getDamage(i) ..  " / " .. karna.tasks[i][2].goal .. "\nKills: " .. getKills(i) .. " / " .. karna.tasks[i][1].goal .. "\nYou deal +" .. (100* karna.cross_damage_multiplier[i]) .. "% " .. "(+" .. karna.cross_damage_modifier[i] .. ") " .. "damage"
 		end
 		table.insert(selections, selection)
 	end
@@ -397,7 +397,9 @@ table.insert(menuContent, storeMenu())
 
 table.insert(menuContent, logMenu())
 
-menuComp = new_menu(menuContent, {127, 1}, {3, 3}, {0, 12})
+table.insert(menuContent, testMenu())
+
+menuComp = new_menu(menuContent, {258, 1}, {3, 3}, {0, 12})
 
 mapContent = {"Pirate Ship"}
 mapComp = new(mapContent, 140, 91, 59, 24)
@@ -413,8 +415,8 @@ menuState = {
  		menuState.entities = {}
  		table.insert(menuState.entities, partyComp)
  		table.insert(menuState.entities, menuComp)
- 		table.insert(menuState.entities, mapComp)
- 		table.insert(menuState.entities, descComp)
+ 		--table.insert(menuState.entities, mapComp)
+ 		--table.insert(menuState.entities, descComp)
  	end,
 	onUpdate = function(dt) 
 

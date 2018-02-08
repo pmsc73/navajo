@@ -53,25 +53,39 @@ function init_log()
 		}
 		karna.cross_damage_modifier[name] = 0
 		karna.cross_damage_multiplier[name] = 1
-		karna.tasks[name] = {
-			goal = 1,
-			current = 0,
-			oncomplete = function() 
-				karna.cross_damage_multiplier[name] = karna.cross_damage_multiplier[name] * 10
-			end,
-			goalScale = 1,
-			rewardScale = 1
+		karna.tasks[name] = 
+		{
+			{
+				goal = 1,
+				current = 0,
+				oncomplete = function() 
+					karna.cross_damage_multiplier[name] = karna.cross_damage_multiplier[name] * 1.1
+				end,
+				goalScale = 10,
+				rewardScale = 1
+			},
+			{
+				goal = 10,
+				current = 0,
+				oncomplete = function()
+					karna.cross_damage_modifier[name] = karna.cross_damage_modifier[name] + 1
+				end,
+				goalScale = 5,
+				rewardScale = 1
+			}
 		}
-		karna.tasks[name].update = function(delta)
-			local t = karna.tasks[name]
-			t.current = t.current + delta
-				if t.current >= t.goal then
-					t.oncomplete()
-					if t.goalScale > 0 then
-						t.goal = t.goal * t.goalScale
+		for i, task in ipairs(karna.tasks[name]) do 
+
+			task.update = function(delta)
+				task.current = task.current + delta
+				if task.current >= task.goal then
+					task.oncomplete()
+					if task.goalScale > 0 then
+						task.goal = task.goal * task.goalScale
 					end
 				end
 			end
+		end
 
 	end
 	return log
@@ -82,6 +96,7 @@ karna.log = init_log()
 function logDamage(name, d) 
 	local dmg = karna.log[name].damage
 	karna.log[name].damage = dmg + d
+	karna.tasks[name][2].update(d)
 
 end
 
@@ -93,7 +108,7 @@ function logDeath(name)
 	if name ~= "Karna" then
 		local lkills = karna.log[name].kills
 		karna.log[name].kills = lkills + 1
-		karna.tasks[name].update(1)
+		karna.tasks[name][1].update(1)
 	end
 end
 
