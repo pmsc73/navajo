@@ -100,8 +100,32 @@ local menuMenu
 menuMenu = function()
 	local selections = {}
 	for _, sel in pairs(partyContent) do
-		selection = new_menu({""}, {0,0}, {3,3}, {0,16})
-		selection.render = function() 
+		local selection = {}
+		local subsels = {}
+		for i, p in ipairs(character.STAT_NAMES) do
+			for k, name in pairs(p) do
+				local subsel = {}
+				subsel.s_render = function() 
+					subsel.name = name .. ": " .. sel.stats[k]
+					subsel.handleSideScroll = function(key)
+						if key == "left" and sel.stats[k] > 1 then
+							sel.stats[k] = sel.stats[k] - 1
+							sel.stats.currentAp = sel.stats.currentAp + 1
+						end
+						if key == "right" and sel.stats.currentAp > 0 then
+							sel.stats[k] = sel.stats[k] + 1
+							sel.stats.currentAp = sel.stats.currentAp - 1
+						end
+					end
+				end
+				table.insert(subsels, subsel)
+			end
+		end
+
+		selection = new_menu(subsels, {0,0}, {3,3}, {0,16})
+		local sr = selection.render
+		selection.render = function()
+			sr()
 			sel:render_status()
 		end
 		selection.name = ""

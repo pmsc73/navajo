@@ -15,7 +15,32 @@ battleSystem = {}
 PHYSICAL 	= "PHYSICAL"
 MAGIC		= "MAGIC"
 ELEM_NONE	= "NON ELEMENTAL"
+SPEED_BASED	= "SPEED BASED" --XXX Change this name?
 
+--[[ battleSystem.dealDamage	
+   - @param t - TYPE of damage to be processed 
+   -		PHYSICAL, MAGIC, SPEED_BASED
+   - @param source - which entity is dealing damage
+   - @param target - which entity is being dealt damage
+   - @param element - color of the damage being dealt
+   -
+   - Calculates and subtracts from [target] the damage dealt by [source]
+   - Damage formula is given as:
+   -
+   - damage = (2 ^ C) * (A / D)
+   -
+   - where 
+   -	C = [-1, 1] is the color modifier given by the difference in target color and element.
+   -	A is the Attack value, 
+   -	D is the Defense value, 
+   -	both given as
+   -		(base + mod) * mult
+   -
+   - 	where base is given by the source, mod is given by source and a matchup-specific
+   -	modifier (x-mod), and mult is given by the source with it's own matchup-specific
+   -	addend (x-mult)
+
+]]
 function battleSystem.dealDamage(t, source, target, element)
 	baseDamageMod   = ops.nndv(source.damage_modifier,    0)	
 	baseDefenceMod  = ops.nndv(target.defence_modifier,   0)

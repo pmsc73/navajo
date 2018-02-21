@@ -2,10 +2,24 @@ require 'images'
 require 'skill'
 require 'battle'
 require 'enemy'
+require 'task'
 -- Character Entity
 
-character = {} 
+character = {
+	STAT_NAMES = {
+		[1] = {str = "Strength"},
+		[2] = {frt = "Fortitude"},
+		[3] = {con = "Constitution"},
+		[4] = {int = "Intelligence"},
+		[5] = {wis = "Wisdom"},
+		[6] = {wll = "Willpower"},
+		[7] = {dex = "Dexterity"},
+		[8] = {agi = "Agility"},
+		[9] = {edr = "Endurance"}
+	}
+} 
 character.__index = character
+
 
 -- Constructor
 function character.new(name, image, ax, ay) 
@@ -16,9 +30,9 @@ function character.new(name, image, ax, ay)
 	--combat stats
 	o.colors = {}
 	o.stats = {
-		str     = 1, frt = 1, con = 1,
-		int = 1, wis   = 1, wll   = 1,
-		dex 	 = 1, agi   = 1, edr    = 1
+		str = 1, frt = 1, con = 1,
+		int = 1, wis = 1, wll = 1,
+		dex = 1, agi = 1, edr = 1
 	}
 
 	o.damage_modifier = 0
@@ -42,20 +56,6 @@ karna.skills = {skill.berserk, skill.defend}
 karna.skillTree = {}
 karna.tasks = {}
 
-karna.tasks.new = function(goal, oncomplete, goalScale, rewardScale)
-	local task = {}
-	task.level = 0
-	task.goal = goal
-	task.current = 0
-	task.oncomplete = function()
-		task.level = task.level + 1
-		oncomplete()
-	end
-	task.goalScale = goalScale
-	task.rewardScale = rewardScale
-	return task
-end
-
 function init_log() 
 	local log = {}
 
@@ -69,53 +69,19 @@ function init_log()
 		karna.cross_damage_multiplier[name] = 1
 		karna.tasks[name] = 
 		{
-			karna.tasks.new(1, 
+			Task.new(1, 
 				function() 
 					karna.cross_damage_multiplier[name] = karna.cross_damage_multiplier[name] * 1.1
 				end,
 				10, 1
 			),
-			karna.tasks.new(10, 
+			Task.new(10, 
 				function()
 					karna.cross_damage_modifier[name] = karna.cross_damage_modifier[name] + 1
 				end,
 				10, 1
 			)
-			-- {
-			-- 	level = 0,
-			-- 	goal = 1,
-			-- 	current = 0,
-			-- 	oncomplete = function()
-			-- 		level = level + 1 
-			-- 		karna.cross_damage_multiplier[name] = karna.cross_damage_multiplier[name] * 1.1
-			-- 	end,
-			-- 	goalScale = 10,
-			-- 	rewardScale = 1
-			-- },
-			-- {
-			-- 	level = 0,
-			-- 	goal = 10,
-			-- 	current = 0,
-			-- 	oncomplete = function()
-			-- 		level = level + 1
-			-- 		karna.cross_damage_modifier[name] = karna.cross_damage_modifier[name] + 1
-			-- 	end,
-			-- 	goalScale = 5,
-			-- 	rewardScale = 1
-			-- }
 		}
-		for i, task in ipairs(karna.tasks[name]) do 
-
-			task.update = function(delta)
-				task.current = task.current + delta
-				if task.current >= task.goal then
-					task.oncomplete()
-					if task.goalScale > 0 then
-						task.goal = task.goal * task.goalScale
-					end
-				end
-			end
-		end
 
 	end
 	return log
@@ -233,6 +199,9 @@ function xpToLevel(char)
 	return xp
 end
 
+function character:getstat(key)
+	return self.stats[key]
+end
 
 function character:render_status() 
 	gfx.print(self.name, 10, 10)
