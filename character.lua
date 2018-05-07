@@ -1,5 +1,6 @@
 require 'images'
 require 'skill'
+require 'skilltree'
 require 'battle'
 require 'enemy'
 require 'task'
@@ -53,7 +54,18 @@ end
 karna = character.new("Karna", res.karna, 6,  6)
 karna.skills = {skill.berserk, skill.defend}
 
-karna.skillTree = {}
+karna.skillTree = SkillTree.new("KarnaSkillTree", 
+	{
+		"Skill 1",
+		"Skill 2",
+		"Skill 3",
+		"Skill 3.1",
+		"Skill 4",
+		"Skill 4.1",
+		"Skill 4.1.2"
+	})
+
+karna.spellSkills = {}
 karna.tasks = {}
 
 function init_log() 
@@ -166,17 +178,17 @@ for _, c in pairs({karna}) do
 	c.color = c.colors[1]
 
 
-	table.insert(c.skillTree, 
+	table.insert(c.spellSkills, 
 		attuneSpell(c, "Attune: Red", "Draw upon the power of Talathir\n violent father to Raejk and Uennys", 1)
 	)
-	table.insert(c.skillTree, 
+	table.insert(c.spellSkills, 
 		attuneSpell(c, "Attune: Green", "Draw upon the power of Vyul\n fair judge, and brother to Nezelatl", 2)
 	)
-	table.insert(c.skillTree,
+	table.insert(c.spellSkills,
 		attuneSpell(c, "Attune: Blue", "Draw upon the power of Mebume\n the mother of all demands respect", 3)
 	)
 
-	table.insert(c.skillTree, {
+	table.insert(c.spellSkills, {
 		name = "Chromasynthesis",
 		description = "Combine the essence of your two\n most used spells",
 		cost = 99,

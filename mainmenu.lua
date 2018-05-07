@@ -169,7 +169,7 @@ skillsMenu = function()
 	local selections = {}
 	for _, sel in pairs(partyContent) do
 		local SKILLS = {}
-		for _, SKILL in pairs(sel.skillTree) do
+		for _, SKILL in pairs(sel.spellSkills) do
 			local s = {
 				name = SKILL.name, 
 				description = SKILL.description,
@@ -365,6 +365,16 @@ testMenu = function()
 	return menu
 end
 
+local skillTreeMenu
+skillTreeMenu = function()
+	local menu = new_menu({}, {0, 0}, {3,3}, {0,16})
+	menu.name = "Tree"
+	menu.render = function() 
+
+		karna.skillTree.display(5,5)
+	end
+	return menu
+end
 
 local storeMenu
 storeMenu = function()
@@ -408,20 +418,17 @@ logMenu = function()
 	menu.name = "Log"
 	return menu
 end
+
 menuContent = {}
+
 table.insert(menuContent, menuMenu())
-
 table.insert(menuContent, skillsMenu())
-
 table.insert(menuContent, itemMenu(INVENTORY))
-
 table.insert(menuContent, colorsMenu())
-
 table.insert(menuContent, storeMenu())
-
 table.insert(menuContent, logMenu())
-
 table.insert(menuContent, testMenu())
+table.insert(menuContent, skillTreeMenu())
 
 menuComp = new_menu(menuContent, {258, 1}, {3, 3}, {0, 12})
 

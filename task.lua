@@ -4,12 +4,12 @@
 Task = {
 
 	--[[ Task.new 
-	   - @param goal - numerical value at which task is completed or leveled
-       - @param oncomplete - function to be called on completion of task
-       - @param goalScale - scaling value for subsequent levels of goal
-       - @param rewardScale - scaling value for subsequent rewards of goal
+	   - @param goal:double - numerical value at which task is completed or leveled
+       - @param oncomplete:() - function to be called on completion of task
+       - @param goalScale:double - scaling value for subsequent levels of goal
+       - @param rewardScale:double - scaling value for subsequent rewards of goal
        -
-       - Creates a new Task with given information
+       - Constructor for Task objects
 	  ]]
 	new = function(goal, oncomplete, goalScale, rewardScale) 
 		local t = {}

@@ -16,7 +16,7 @@ function get_image(ty, tx)
 	return image
 end
 
-function new(name, image, POW, MAG, SPD, xp)
+local function new(name, image, POW, MAG, SPD, xp)
 	local e = {}
 	e.name = name
 	e.tileset = tiles

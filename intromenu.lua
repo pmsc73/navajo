@@ -152,7 +152,7 @@ intromenu_state = {
 
 	onKeyPress = function(key)
 		if key == "z" then
-			Sound.game_start:play()
+			--Sound.game_start:play()
 			for k, stat in pairs(__stats) do
 				karna.stats[k] = __stats[k]
 			end
